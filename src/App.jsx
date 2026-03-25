@@ -40,6 +40,52 @@ const tabs = {
       'История последних маршрутов',
       'Отклонение от привычного пути',
     ],
+    detailedScreens: [
+      {
+        name: 'Подключение ребенка',
+        subtitle: 'Быстрый старт и привязка',
+        tone: 'bg-sky-50 border-sky-100',
+        items: [
+          'QR-код или код приглашения для привязки',
+          'Выбор школы, адреса дома и основных маршрутов',
+          'Настройка уведомлений о старте и завершении',
+          'Короткое объяснение, что трекинг работает только во время пути',
+        ],
+      },
+      {
+        name: 'Активный маршрут',
+        subtitle: 'Главный экран спокойного контроля',
+        tone: 'bg-white',
+        items: [
+          'Карта с текущим положением ребенка и прогрессом пути',
+          'ETA, время в пути и сравнение с обычным временем',
+          'Статус: все спокойно / задержка / отклонение от маршрута',
+          'Быстрые действия: позвонить, открыть историю, посмотреть детали',
+        ],
+      },
+      {
+        name: 'Сигнал по участку',
+        subtitle: 'Нейтральная подача без тревожного дизайна',
+        tone: 'bg-amber-50 border-amber-100',
+        items: [
+          'Карточка потенциально сложного места впереди',
+          'Короткая причина: переход, развязка, оживленная улица',
+          'Расстояние до участка и ожидаемое время прохода',
+          'Рекомендация без алармизма: просто обратить внимание',
+        ],
+      },
+      {
+        name: 'История маршрутов',
+        subtitle: 'Короткая аналитика для родителя',
+        tone: 'bg-slate-50 border-slate-200',
+        items: [
+          'Последние походы в школу и обратно',
+          'Время старта, длительность и факт своевременного прибытия',
+          'Повторяющиеся отклонения или задержки по дням',
+          'Минимальная статистика без перегрузки деталями',
+        ],
+      },
+    ],
   },
   child: {
     title: 'Детский режим',
@@ -79,6 +125,52 @@ const tabs = {
       'Серия дней и прогресс к следующему уровню',
       'Рейтинг друзей',
       'Экран новой ачивки',
+    ],
+    detailedScreens: [
+      {
+        name: 'Главная игровая',
+        subtitle: 'Маршрут как ежедневный челлендж',
+        tone: 'bg-amber-50 border-amber-100',
+        items: [
+          'Сколько XP можно получить сегодня',
+          'Прогресс текущего маршрута и бонус за завершение',
+          'Серия дней и подсказка, как не потерять streak',
+          'Быстрый переход к ачивкам и рейтингу',
+        ],
+      },
+      {
+        name: 'Экран награды',
+        subtitle: 'Момент дофамина после маршрута',
+        tone: 'bg-orange-50 border-orange-100',
+        items: [
+          'Большой блок с полученными XP и наградой дня',
+          'Причины начисления: регулярность, активность, пати',
+          'Прогресс до следующего уровня или значка',
+          'Кнопка поделиться результатом внутри приложения',
+        ],
+      },
+      {
+        name: 'Профиль и ачивки',
+        subtitle: 'Личный прогресс в одном месте',
+        tone: 'bg-white',
+        items: [
+          'Собранные достижения и редкие бейджи',
+          'Статистика по маршрутам, дням и лучшей серии',
+          'Выделенные цели недели',
+          'Визуальный прогресс до новой ачивки',
+        ],
+      },
+      {
+        name: 'Рейтинг друзей',
+        subtitle: 'Социальная динамика без перегруза',
+        tone: 'bg-slate-50 border-slate-200',
+        items: [
+          'Позиция среди друзей и ближайшие соперники',
+          'Кто поднялся выше за неделю',
+          'Сколько XP не хватает до следующего места',
+          'Легкие мотивационные подсказки на день',
+        ],
+      },
     ],
   },
   party: {
@@ -120,6 +212,52 @@ const tabs = {
       'Завершенный общий маршрут',
       'История совместных походов',
     ],
+    detailedScreens: [
+      {
+        name: 'Создание пати',
+        subtitle: 'Запуск совместного маршрута',
+        tone: 'bg-violet-50 border-violet-100',
+        items: [
+          'Выбор времени выхода и точки сбора',
+          'Приглашение друзей по коду или ссылке',
+          'Ограничение размера группы',
+          'Подтверждение общего маршрута до школы',
+        ],
+      },
+      {
+        name: 'Точка сбора',
+        subtitle: 'Понятный статус перед стартом',
+        tone: 'bg-fuchsia-50 border-fuchsia-100',
+        items: [
+          'Кто уже на месте, кто подходит, кто еще не вышел',
+          'Таймер до общего старта',
+          'Мини-карта точки встречи',
+          'Уведомление, если кто-то опаздывает',
+        ],
+      },
+      {
+        name: 'Пати в пути',
+        subtitle: 'Общий прогресс группы',
+        tone: 'bg-white',
+        items: [
+          'Общий маршрут и прогресс пати',
+          'Статусы участников внутри группы',
+          'Бонус за прохождение вместе',
+          'Фиксация, если кто-то отделился от маршрута',
+        ],
+      },
+      {
+        name: 'Общий финиш',
+        subtitle: 'Совместная награда и история',
+        tone: 'bg-slate-50 border-slate-200',
+        items: [
+          'Подтверждение, что группа дошла до школы',
+          'Общий бонус и обновление streak пати',
+          'Итоги маршрута по времени и составу',
+          'Сохранение похода в историю совместных проходов',
+        ],
+      },
+    ],
   },
   rating: {
     title: 'Рейтинги и достижения',
@@ -159,6 +297,52 @@ const tabs = {
       'Рейтинг города',
       'Детальная карточка достижения',
       'Недельная динамика позиции',
+    ],
+    detailedScreens: [
+      {
+        name: 'Рейтинг друзей',
+        subtitle: 'Самый частый сценарий возврата',
+        tone: 'bg-emerald-50 border-emerald-100',
+        items: [
+          'Текущая позиция и ближайшие соседи по очкам',
+          'Разница в XP до следующего места',
+          'Изменение позиции за последние дни',
+          'Быстрый переход к профилю достижений',
+        ],
+      },
+      {
+        name: 'Рейтинг класса',
+        subtitle: 'Командная динамика внутри школы',
+        tone: 'bg-teal-50 border-teal-100',
+        items: [
+          'Какой класс лидирует по регулярности',
+          'Средний вклад участников класса',
+          'Серия побед класса по неделям',
+          'Карточка общего командного результата',
+        ],
+      },
+      {
+        name: 'Рейтинг школы',
+        subtitle: 'Основной презентационный экран',
+        tone: 'bg-white',
+        items: [
+          'Топ пользователей недели по школе',
+          'Фильтры по метрикам: регулярность, серия, активность',
+          'Выделение позиции текущего ребенка',
+          'Прогноз, как можно подняться выше',
+        ],
+      },
+      {
+        name: 'Карточка достижения',
+        subtitle: 'Что влияет на продвижение вверх',
+        tone: 'bg-slate-50 border-slate-200',
+        items: [
+          'Название достижения и сколько оно дает очков',
+          'Условия открытия и текущий прогресс',
+          'Связанные действия: пройти маршрут, собрать streak, идти в пати',
+          'История уже открытых достижений',
+        ],
+      },
     ],
   },
 };
@@ -231,13 +415,13 @@ function tabButton(key, label, activeTab) {
 
 function PhonePreview({ current }) {
   return (
-    <div className="relative mx-auto w-[348px]">
+    <div className="relative mx-auto w-[362px]">
       <div className={`absolute -inset-6 rounded-[3.5rem] ${current.glow} blur-3xl`} />
       <div className="relative rounded-[3.2rem] border-[10px] border-slate-950 bg-slate-950 p-[10px] shadow-[0_30px_90px_rgba(15,23,42,0.28)]">
         <div className="relative overflow-hidden rounded-[2.6rem] bg-[#f8fafc]">
           <div className="absolute left-1/2 top-3 z-20 h-7 w-36 -translate-x-1/2 rounded-full bg-black" />
           <div className={`relative min-h-[700px] bg-gradient-to-b ${current.accent} p-[1px]`}>
-            <div className="min-h-[700px] bg-[#f8fafc]">
+            <div className="min-h-[780px] bg-[#f8fafc]">
               <div className="flex items-center justify-between px-6 pb-4 pt-5 text-[13px] font-semibold text-slate-700">
                 <span>9:41</span>
                 <span>5G</span>
@@ -349,6 +533,22 @@ function ScreenGroupCard({ title, caption, items }) {
   );
 }
 
+function DetailedScreenCard({ screen }) {
+  return (
+    <div className={`rounded-[1.8rem] border p-6 shadow-sm ${screen.tone}`}>
+      <div className="text-lg font-semibold text-slate-900">{screen.name}</div>
+      <div className="mt-2 text-sm leading-6 text-slate-500">{screen.subtitle}</div>
+      <div className="mt-5 grid gap-3">
+        {screen.items.map((item) => (
+          <div key={item} className="rounded-2xl border border-white/70 bg-white/90 px-4 py-3 leading-6 text-slate-700">
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function UniquePrototype() {
   const [tab, setTab] = useState('parent');
   const current = tabs[tab];
@@ -388,7 +588,7 @@ export default function UniquePrototype() {
                 <span className="block">игровую мотивацию идти каждый день.</span>
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 md:text-xl">
-                `Unique` объединяет мягкий маршрутный контроль, игровую мотивацию, совместные
+                Unique объединяет мягкий маршрутный контроль, игровую мотивацию, совместные
                 походы и рейтинги в одном продукте, который удобно показывать как готовую
                 продуктовую концепцию.
               </p>
@@ -508,6 +708,15 @@ export default function UniquePrototype() {
                     <div key={item} className="rounded-2xl bg-slate-900 px-4 py-3 text-white shadow-sm">
                       {item}
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Подробные экраны режима</div>
+                <div className="mt-5 grid gap-4">
+                  {current.detailedScreens.map((screen) => (
+                    <DetailedScreenCard key={screen.name} screen={screen} />
                   ))}
                 </div>
               </div>
