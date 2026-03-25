@@ -11,8 +11,9 @@ function ScreenTab({ active, onClick, label }) {
   );
 }
 
-function shortLabel(name) {
-  const [first] = name.split(' ');
+function shortLabel(screen) {
+  if (screen.tabLabel) return screen.tabLabel;
+  const [first] = screen.name.split(' ');
   return first.length > 10 ? `${first.slice(0, 9)}…` : first;
 }
 
@@ -122,6 +123,55 @@ function HistoryRoutesView({ screen }) {
   );
 }
 
+function LeaderboardRow({ row, units, highlight = false }) {
+  return (
+    <div className={`grid grid-cols-[28px_1fr_68px_54px] items-center gap-1.5 rounded-lg px-2.5 py-2 text-[11px] ${
+      highlight ? 'border border-emerald-200 bg-emerald-50 text-emerald-900' : 'bg-white text-slate-700'
+    }`}>
+      <div className="font-semibold">{row.place}</div>
+      <div className="truncate">{row.name}</div>
+      <div className="truncate text-[10px] text-slate-500">{row.className}</div>
+      <div className="text-right font-semibold">
+        {row.points}
+        {units ? ` ${units}` : ''}
+      </div>
+    </div>
+  );
+}
+
+function LeaderboardView({ leaderboard }) {
+  const units = leaderboard.units || 'XP';
+
+  return (
+    <div className="space-y-2.5">
+      <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
+        <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-slate-500">
+          <span>{leaderboard.title}</span>
+          <span>Обновлено</span>
+        </div>
+        <div className="mt-2 rounded-lg bg-slate-100 px-2.5 py-1.5 text-[10px] text-slate-500">
+          <div className="grid grid-cols-[28px_1fr_68px_54px] gap-1.5">
+            <span>Место</span>
+            <span>Ученик</span>
+            <span>Класс</span>
+            <span className="text-right">Очки</span>
+          </div>
+        </div>
+        <div className="mt-1.5 space-y-1.5">
+          {leaderboard.rows.map((row) => (
+            <LeaderboardRow key={`${row.place}-${row.name}`} row={row} units={units} />
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-[1rem] border border-emerald-200 bg-emerald-50 p-2.5">
+        <div className="mb-1.5 text-[10px] uppercase tracking-[0.16em] text-emerald-700">Твоя позиция</div>
+        <LeaderboardRow row={leaderboard.userRow} units={units} highlight />
+      </div>
+    </div>
+  );
+}
+
 function BottomNav({ activeMode, onModeChange }) {
   const tabs = [
     { key: 'parent', label: 'Родитель' },
@@ -155,9 +205,11 @@ function BottomNav({ activeMode, onModeChange }) {
 
 export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange, onModeChange }) {
   const screen = mode.screens[screenIndex];
-  const flatItems = screen.sections.flatMap((section) => section.items);
+  const flatItems = (screen.sections || []).flatMap((section) => section.items);
+  const metrics = screen.metrics || [];
   const showMap = shouldShowMap(modeKey, screen.name);
   const isHistory = modeKey === 'parent' && screen.name === 'История маршрутов';
+  const showLeaderboard = modeKey === 'rating' && Boolean(screen.leaderboard);
 
   return (
     <div className="relative mx-auto w-[280px] max-w-full sm:w-[295px] md:w-[310px]">
@@ -190,7 +242,7 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
                       key={item.name}
                       active={index === screenIndex}
                       onClick={() => onScreenChange(index)}
-                      label={shortLabel(item.name)}
+                      label={shortLabel(item)}
                     />
                   ))}
                 </div>
@@ -206,14 +258,18 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
                     </div>
                   )}
 
-                  {isHistory ? (
+                  {showLeaderboard ? (
+                    <div className="mt-2.5 min-h-0 flex-1 overflow-y-auto pr-1">
+                      <LeaderboardView leaderboard={screen.leaderboard} />
+                    </div>
+                  ) : isHistory ? (
                     <div className="mt-2.5 min-h-0 flex-1 overflow-y-auto pr-1">
                       <HistoryRoutesView screen={screen} />
                     </div>
                   ) : (
                     <>
                       <div className="mt-2.5 grid grid-cols-2 gap-2">
-                        {screen.metrics.map(([label, value]) => (
+                        {metrics.map(([label, value]) => (
                           <div key={label} className="rounded-[1rem] border border-slate-200 bg-white p-2">
                             <div className="text-[10px] uppercase tracking-[0.18em] text-slate-400">{label}</div>
                             <div className="mt-1 text-sm font-semibold text-slate-900">{value}</div>
