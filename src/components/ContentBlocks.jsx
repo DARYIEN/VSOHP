@@ -1,23 +1,31 @@
-export function FeatureCard({ title, text }) {
+export function FeatureCard({ title, text, compact = false }) {
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
       <div className="text-lg font-semibold text-slate-900">{title}</div>
-      <div className="mt-3 leading-7 text-slate-600">{text}</div>
+      <div className={`mt-3 text-slate-600 ${compact ? 'leading-6 text-sm' : 'leading-7'}`}>{text}</div>
     </div>
   );
 }
 
-export function ScreenGroupCard({ title, caption, items }) {
+export function ScreenGroupCard({ title, caption, items, compact = false }) {
+  const visibleItems = compact ? items.slice(0, 3) : items;
+  const hiddenCount = items.length - visibleItems.length;
+
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
       <div className="text-xl font-semibold text-slate-900">{title}</div>
       <div className="mt-2 text-sm leading-6 text-slate-500">{caption}</div>
       <div className="mt-6 grid gap-3">
-        {items.map((item) => (
+        {visibleItems.map((item) => (
           <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700">
             {item}
           </div>
         ))}
+        {hiddenCount > 0 && (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-slate-500">
+            + еще {hiddenCount} экрана
+          </div>
+        )}
       </div>
     </div>
   );

@@ -33,12 +33,12 @@ function shouldShowMap(modeKey, screenName) {
   return (mapScreens[modeKey] || []).includes(screenName);
 }
 
-function RouteMap({ variant }) {
+function RouteMap({ variant, compact = false }) {
   if (variant === 'party') {
     return (
       <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
         <div className="text-[10px] uppercase tracking-[0.16em] text-slate-500">Карта группы</div>
-        <div className="mt-2 h-24 overflow-hidden rounded-xl bg-white">
+        <div className={`mt-2 overflow-hidden rounded-xl bg-white ${compact ? 'h-20' : 'h-24'}`}>
           <svg viewBox="0 0 300 120" className="h-full w-full">
             <rect x="0" y="0" width="300" height="120" fill="#f8fafc" />
             <path d="M18 98 C 66 86, 86 42, 134 44 S 202 98, 244 70 S 278 38, 292 26" fill="none" stroke="#ede9fe" strokeWidth="22" strokeLinecap="round" />
@@ -57,7 +57,7 @@ function RouteMap({ variant }) {
     return (
       <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
         <div className="text-[10px] uppercase tracking-[0.16em] text-slate-500">Прогресс на маршруте</div>
-        <div className="mt-2 h-24 overflow-hidden rounded-xl bg-white">
+        <div className={`mt-2 overflow-hidden rounded-xl bg-white ${compact ? 'h-20' : 'h-24'}`}>
           <svg viewBox="0 0 300 120" className="h-full w-full">
             <rect x="0" y="0" width="300" height="120" fill="#fffbeb" />
             <path d="M12 96 C 56 90, 84 52, 120 48 S 186 70, 228 56 S 272 28, 292 18" fill="none" stroke="#fde68a" strokeWidth="22" strokeLinecap="round" />
@@ -74,7 +74,7 @@ function RouteMap({ variant }) {
   return (
     <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
       <div className="text-[10px] uppercase tracking-[0.16em] text-slate-500">Маршрут на карте</div>
-      <div className="mt-2 h-24 overflow-hidden rounded-xl bg-white">
+      <div className={`mt-2 overflow-hidden rounded-xl bg-white ${compact ? 'h-20' : 'h-24'}`}>
         <svg viewBox="0 0 300 120" className="h-full w-full">
           <rect x="0" y="0" width="300" height="120" fill="#f8fafc" />
           <path d="M10 95 C 70 88, 75 45, 125 42 S 195 94, 238 66 S 272 36, 292 20" fill="none" stroke="#dbeafe" strokeWidth="22" strokeLinecap="round" />
@@ -90,7 +90,11 @@ function RouteMap({ variant }) {
   );
 }
 
-function HistoryRoutesView({ screen }) {
+function HistoryRoutesView({ screen, compact = false }) {
+  const historyItems = compact
+    ? ['Сегодня 08:14 • 13 мин • вовремя', 'Вчера 08:16 • 14 мин • вовремя']
+    : ['Сегодня 08:14 • 13 мин • вовремя', 'Вчера 08:16 • 14 мин • вовремя', 'Пн 08:20 • 16 мин • небольшая задержка'];
+
   return (
     <div className="space-y-2.5">
       <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
@@ -112,7 +116,7 @@ function HistoryRoutesView({ screen }) {
 
       <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
         <div className="space-y-1.5">
-          {['Сегодня 08:14 • 13 мин • вовремя', 'Вчера 08:16 • 14 мин • вовремя', 'Пн 08:20 • 16 мин • небольшая задержка'].map((item) => (
+          {historyItems.map((item) => (
             <div key={item} className="rounded-lg bg-white px-2.5 py-2 text-[11px] text-slate-600">
               {item}
             </div>
@@ -139,8 +143,9 @@ function LeaderboardRow({ row, units, highlight = false }) {
   );
 }
 
-function LeaderboardView({ leaderboard }) {
+function LeaderboardView({ leaderboard, compact = false }) {
   const units = leaderboard.units || 'XP';
+  const topRows = compact ? leaderboard.rows.slice(0, 3) : leaderboard.rows;
 
   return (
     <div className="space-y-2.5">
@@ -158,7 +163,7 @@ function LeaderboardView({ leaderboard }) {
           </div>
         </div>
         <div className="mt-1.5 space-y-1.5">
-          {leaderboard.rows.map((row) => (
+          {topRows.map((row) => (
             <LeaderboardRow key={`${row.place}-${row.name}`} row={row} units={units} />
           ))}
         </div>
@@ -203,16 +208,17 @@ function BottomNav({ activeMode, onModeChange }) {
   );
 }
 
-export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange, onModeChange }) {
+export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange, onModeChange, compact = false }) {
   const screen = mode.screens[screenIndex];
   const flatItems = (screen.sections || []).flatMap((section) => section.items);
   const metrics = screen.metrics || [];
+  const visibleItems = compact ? flatItems.slice(0, 4) : flatItems;
   const showMap = shouldShowMap(modeKey, screen.name);
   const isHistory = modeKey === 'parent' && screen.name === 'История маршрутов';
   const showLeaderboard = modeKey === 'rating' && Boolean(screen.leaderboard);
 
   return (
-    <div className="relative mx-auto w-[280px] max-w-full sm:w-[295px] md:w-[310px]">
+    <div className={`relative mx-auto max-w-full ${compact ? 'w-[252px] sm:w-[268px] md:w-[284px]' : 'w-[280px] sm:w-[295px] md:w-[310px]'}`}>
       <div className={`absolute -inset-5 rounded-[3rem] ${mode.glow} blur-3xl`} />
       <div className="relative rounded-[2.8rem] border-[8px] border-slate-950 bg-slate-950 p-[8px] shadow-[0_22px_52px_rgba(15,23,42,0.24)]">
         <div className="relative overflow-hidden rounded-[2.2rem] bg-[#f8fafc]">
@@ -233,7 +239,7 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
                     </div>
                   </div>
                   <div className="mt-1.5 text-sm font-semibold text-slate-900">{screen.title}</div>
-                  <div className="mt-1 text-[11px] leading-4 text-slate-600">{screen.subtitle}</div>
+                  {!compact && <div className="mt-1 text-[11px] leading-4 text-slate-600">{screen.subtitle}</div>}
                 </div>
 
                 <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1">
@@ -254,17 +260,17 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
 
                   {showMap && (
                     <div className="mt-2.5">
-                      <RouteMap variant={mapVariant(modeKey)} />
+                      <RouteMap variant={mapVariant(modeKey)} compact={compact} />
                     </div>
                   )}
 
                   {showLeaderboard ? (
                     <div className="mt-2.5 min-h-0 flex-1 overflow-y-auto pr-1">
-                      <LeaderboardView leaderboard={screen.leaderboard} />
+                      <LeaderboardView leaderboard={screen.leaderboard} compact={compact} />
                     </div>
                   ) : isHistory ? (
                     <div className="mt-2.5 min-h-0 flex-1 overflow-y-auto pr-1">
-                      <HistoryRoutesView screen={screen} />
+                      <HistoryRoutesView screen={screen} compact={compact} />
                     </div>
                   ) : (
                     <>
@@ -280,7 +286,7 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
                       <div className="mt-2.5 min-h-0 flex-1 overflow-y-auto pr-1">
                         <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
                           <div className="space-y-1.5">
-                            {flatItems.map((item) => (
+                            {visibleItems.map((item) => (
                               <div key={item} className="flex items-center justify-between rounded-lg bg-white px-2.5 py-2 text-[11px] text-slate-600">
                                 <span>{item}</span>
                                 <span className="text-slate-400">›</span>

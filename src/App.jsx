@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PhoneMockup from './components/PhoneMockup';
 import { FeatureCard, ScreenGroupCard } from './components/ContentBlocks';
 import { modes, screenGroups } from './data/productData';
 
+function shortenText(text, maxLength) {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}...`;
+}
+
 export default function UniquePrototype() {
   const [tab, setTab] = useState('parent');
+  const [isCompactMobile, setIsCompactMobile] = useState(false);
   const [screenIndexes, setScreenIndexes] = useState({
     parent: 0,
     child: 0,
@@ -27,6 +33,20 @@ export default function UniquePrototype() {
     if (!modes[modeKey]) return;
     setTab(modeKey);
   };
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const applyMode = () => setIsCompactMobile(mediaQuery.matches);
+    applyMode();
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', applyMode);
+      return () => mediaQuery.removeEventListener('change', applyMode);
+    }
+
+    mediaQuery.addListener(applyMode);
+    return () => mediaQuery.removeListener(applyMode);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
@@ -63,9 +83,9 @@ export default function UniquePrototype() {
                 <span className="block">игровую мотивацию идти каждый день.</span>
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 md:text-xl">
-                Unique объединяет мягкий маршрутный контроль, игровую мотивацию, совместные
-                походы и рейтинги в одном продукте, который удобно показывать как готовую
-                продуктовую концепцию.
+                {isCompactMobile
+                  ? 'Unique объединяет безопасность маршрута, мотивацию и рейтинги в одном приложении.'
+                  : 'Unique объединяет мягкий маршрутный контроль, игровую мотивацию, совместные походы и рейтинги в одном продукте, который удобно показывать как готовую продуктовую концепцию.'}
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -78,12 +98,17 @@ export default function UniquePrototype() {
               </div>
 
               <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-                {[
+                {(isCompactMobile
+                  ? [
+                      ['Родитель', 'Статус пути'],
+                      ['Ребенок', 'XP и ачивки'],
+                    ]
+                  : [
                   ['Родитель', 'Статус маршрута и время до школы'],
                   ['Ребенок', 'XP, streak и ачивки'],
                   ['Пати', 'Совместные походы'],
                   ['Рейтинг', 'Друзья, школа, город'],
-                ].map(([title, text]) => (
+                    ]).map(([title, text]) => (
                   <div key={title} className="rounded-[1.8rem] border border-slate-200 bg-white/90 p-4 shadow-sm backdrop-blur">
                     <div className="font-semibold text-slate-900">{title}</div>
                     <div className="mt-1 text-sm leading-6 text-slate-600">{text}</div>
@@ -99,6 +124,7 @@ export default function UniquePrototype() {
                 screenIndex={currentScreenIndex}
                 onScreenChange={handleScreenChange}
                 onModeChange={handleModeChange}
+                compact={isCompactMobile}
               />
             </div>
           </div>
@@ -112,15 +138,20 @@ export default function UniquePrototype() {
             Четыре режима вокруг одного ежедневного маршрута
           </h2>
           <p className="mt-4 text-lg leading-8 text-slate-600">
-            Продукт связывает интересы родителя и ребенка в одном сценарии. Взрослый получает
-            спокойствие и предсказуемость пути, ребенок — мотивацию возвращаться в приложение и
-            видеть прогресс.
+            {isCompactMobile
+              ? 'Один маршрут, четыре режима: спокойствие для родителя и мотивация для ребенка.'
+              : 'Продукт связывает интересы родителя и ребенка в одном сценарии. Взрослый получает спокойствие и предсказуемость пути, ребенок — мотивацию возвращаться в приложение и видеть прогресс.'}
           </p>
         </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {Object.values(modes).map((item) => (
-            <FeatureCard key={item.title} title={item.title} text={item.desc} />
+          {(isCompactMobile ? Object.values(modes).slice(0, 2) : Object.values(modes)).map((item) => (
+            <FeatureCard
+              key={item.title}
+              title={item.title}
+              text={isCompactMobile ? shortenText(item.desc, 120) : item.desc}
+              compact={isCompactMobile}
+            />
           ))}
         </div>
       </section>
@@ -133,8 +164,9 @@ export default function UniquePrototype() {
               Каждый экран можно открыть прямо внутри телефона
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
-              Переключайте режимы продукта, а навигация по экранным состояниям происходит прямо в
-              интерфейсе телефона, как в реальном приложении.
+              {isCompactMobile
+                ? 'Переключайте режимы и экраны прямо в интерфейсе телефона.'
+                : 'Переключайте режимы продукта, а навигация по экранным состояниям происходит прямо в интерфейсе телефона, как в реальном приложении.'}
             </p>
           </div>
 
@@ -148,8 +180,13 @@ export default function UniquePrototype() {
                 <p className="mt-4 text-lg leading-8 text-slate-600">{current.desc}</p>
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  {current.featureBlocks.map((item) => (
-                    <FeatureCard key={item.title} title={item.title} text={item.text} />
+                  {(isCompactMobile ? current.featureBlocks.slice(0, 1) : current.featureBlocks).map((item) => (
+                    <FeatureCard
+                      key={item.title}
+                      title={item.title}
+                      text={isCompactMobile ? shortenText(item.text, 110) : item.text}
+                      compact={isCompactMobile}
+                    />
                   ))}
                 </div>
               </div>
@@ -157,7 +194,7 @@ export default function UniquePrototype() {
               <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
                 <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Ключевые блоки режима</div>
                 <div className="mt-5 grid gap-3">
-                  {current.panels.map((item) => (
+                  {(isCompactMobile ? current.panels.slice(0, 2) : current.panels).map((item) => (
                     <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700">
                       {item}
                     </div>
@@ -182,6 +219,7 @@ export default function UniquePrototype() {
                 screenIndex={currentScreenIndex}
                 onScreenChange={handleScreenChange}
                 onModeChange={handleModeChange}
+                compact={isCompactMobile}
               />
             </div>
           </div>
@@ -195,15 +233,21 @@ export default function UniquePrototype() {
             На лендинге можно раскрыть весь функционал по ключевым ролям
           </h2>
           <p className="mt-4 text-lg leading-8 text-slate-600">
-            Ниже собран полный набор экранов по родительскому, детскому, совместному и
-            рейтинговому опыту. Это уже выглядит как структурированная демонстрация продукта, а не
-            как внутренний список пожеланий.
+            {isCompactMobile
+              ? 'Краткая карта экранов по всем ключевым режимам продукта.'
+              : 'Ниже собран полный набор экранов по родительскому, детскому, совместному и рейтинговому опыту. Это уже выглядит как структурированная демонстрация продукта, а не как внутренний список пожеланий.'}
           </p>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
           {screenGroups.map((group) => (
-            <ScreenGroupCard key={group.title} title={group.title} caption={group.caption} items={group.items} />
+            <ScreenGroupCard
+              key={group.title}
+              title={group.title}
+              caption={group.caption}
+              items={group.items}
+              compact={isCompactMobile}
+            />
           ))}
         </div>
       </section>
