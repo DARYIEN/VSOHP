@@ -11,6 +11,7 @@ function shortenText(text, maxLength) {
 export default function UniquePrototype() {
   const [tab, setTab] = useState('parent');
   const [isCompactMobile, setIsCompactMobile] = useState(false);
+  const [isUltraMobile, setIsUltraMobile] = useState(false);
   const [screenIndexes, setScreenIndexes] = useState({
     parent: 0,
     child: 0,
@@ -35,18 +36,46 @@ export default function UniquePrototype() {
   };
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    const applyMode = () => setIsCompactMobile(mediaQuery.matches);
+    const applyMode = () => {
+      const width = window.innerWidth;
+      setIsCompactMobile(width <= 768);
+      setIsUltraMobile(width <= 430);
+    };
     applyMode();
 
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', applyMode);
-      return () => mediaQuery.removeEventListener('change', applyMode);
-    }
-
-    mediaQuery.addListener(applyMode);
-    return () => mediaQuery.removeListener(applyMode);
+    window.addEventListener('resize', applyMode);
+    return () => window.removeEventListener('resize', applyMode);
   }, []);
+
+  const compactModes = isUltraMobile
+    ? Object.values(modes).slice(0, 1)
+    : isCompactMobile
+      ? Object.values(modes).slice(0, 2)
+      : Object.values(modes);
+
+  const compactPanels = isUltraMobile ? current.panels.slice(0, 1) : isCompactMobile ? current.panels.slice(0, 2) : current.panels;
+
+  const compactFeatureBlocks = isUltraMobile
+    ? current.featureBlocks.slice(0, 1)
+    : isCompactMobile
+      ? current.featureBlocks.slice(0, 1)
+      : current.featureBlocks;
+
+  const compactHeroCards = isUltraMobile
+    ? [['Родитель', 'Статус пути']]
+    : isCompactMobile
+      ? [
+          ['Родитель', 'Статус пути'],
+          ['Ребенок', 'XP и ачивки'],
+        ]
+      : [
+          ['Родитель', 'Статус маршрута и время до школы'],
+          ['Ребенок', 'XP, streak и ачивки'],
+          ['Пати', 'Совместные походы'],
+          ['Рейтинг', 'Друзья, школа, город'],
+        ];
+
+  const compactGridClass = isUltraMobile ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-4';
 
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
@@ -83,7 +112,9 @@ export default function UniquePrototype() {
                 <span className="block">игровую мотивацию идти каждый день.</span>
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 md:text-xl">
-                {isCompactMobile
+                {isUltraMobile
+                  ? 'Unique: безопасность маршрута и мотивация ребенка в одном приложении.'
+                  : isCompactMobile
                   ? 'Unique объединяет безопасность маршрута, мотивацию и рейтинги в одном приложении.'
                   : 'Unique объединяет мягкий маршрутный контроль, игровую мотивацию, совместные походы и рейтинги в одном продукте, который удобно показывать как готовую продуктовую концепцию.'}
               </p>
@@ -97,18 +128,8 @@ export default function UniquePrototype() {
                 </a>
               </div>
 
-              <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-                {(isCompactMobile
-                  ? [
-                      ['Родитель', 'Статус пути'],
-                      ['Ребенок', 'XP и ачивки'],
-                    ]
-                  : [
-                  ['Родитель', 'Статус маршрута и время до школы'],
-                  ['Ребенок', 'XP, streak и ачивки'],
-                  ['Пати', 'Совместные походы'],
-                  ['Рейтинг', 'Друзья, школа, город'],
-                    ]).map(([title, text]) => (
+              <div className={`mt-8 grid gap-4 ${compactGridClass}`}>
+                {compactHeroCards.map(([title, text]) => (
                   <div key={title} className="rounded-[1.8rem] border border-slate-200 bg-white/90 p-4 shadow-sm backdrop-blur">
                     <div className="font-semibold text-slate-900">{title}</div>
                     <div className="mt-1 text-sm leading-6 text-slate-600">{text}</div>
@@ -138,18 +159,20 @@ export default function UniquePrototype() {
             Четыре режима вокруг одного ежедневного маршрута
           </h2>
           <p className="mt-4 text-lg leading-8 text-slate-600">
-            {isCompactMobile
+            {isUltraMobile
+              ? 'Один маршрут, четыре режима.'
+              : isCompactMobile
               ? 'Один маршрут, четыре режима: спокойствие для родителя и мотивация для ребенка.'
               : 'Продукт связывает интересы родителя и ребенка в одном сценарии. Взрослый получает спокойствие и предсказуемость пути, ребенок — мотивацию возвращаться в приложение и видеть прогресс.'}
           </p>
         </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {(isCompactMobile ? Object.values(modes).slice(0, 2) : Object.values(modes)).map((item) => (
+          {compactModes.map((item) => (
             <FeatureCard
               key={item.title}
               title={item.title}
-              text={isCompactMobile ? shortenText(item.desc, 120) : item.desc}
+              text={isUltraMobile ? shortenText(item.desc, 74) : isCompactMobile ? shortenText(item.desc, 120) : item.desc}
               compact={isCompactMobile}
             />
           ))}
@@ -164,7 +187,9 @@ export default function UniquePrototype() {
               Каждый экран можно открыть прямо внутри телефона
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
-              {isCompactMobile
+              {isUltraMobile
+                ? 'Переключение режимов и экранов прямо в телефоне.'
+                : isCompactMobile
                 ? 'Переключайте режимы и экраны прямо в интерфейсе телефона.'
                 : 'Переключайте режимы продукта, а навигация по экранным состояниям происходит прямо в интерфейсе телефона, как в реальном приложении.'}
             </p>
@@ -177,14 +202,16 @@ export default function UniquePrototype() {
                   {current.badge}
                 </div>
                 <h3 className="mt-5 text-3xl font-bold tracking-tight">{current.title}</h3>
-                <p className="mt-4 text-lg leading-8 text-slate-600">{current.desc}</p>
+                <p className="mt-4 text-lg leading-8 text-slate-600">
+                  {isUltraMobile ? shortenText(current.desc, 90) : isCompactMobile ? shortenText(current.desc, 130) : current.desc}
+                </p>
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  {(isCompactMobile ? current.featureBlocks.slice(0, 1) : current.featureBlocks).map((item) => (
+                  {compactFeatureBlocks.map((item) => (
                     <FeatureCard
                       key={item.title}
-                      title={item.title}
-                      text={isCompactMobile ? shortenText(item.text, 110) : item.text}
+                      title={isUltraMobile ? shortenText(item.title, 24) : item.title}
+                      text={isUltraMobile ? shortenText(item.text, 80) : isCompactMobile ? shortenText(item.text, 110) : item.text}
                       compact={isCompactMobile}
                     />
                   ))}
@@ -194,7 +221,7 @@ export default function UniquePrototype() {
               <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
                 <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Ключевые блоки режима</div>
                 <div className="mt-5 grid gap-3">
-                  {(isCompactMobile ? current.panels.slice(0, 2) : current.panels).map((item) => (
+                  {compactPanels.map((item) => (
                     <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700">
                       {item}
                     </div>
@@ -202,14 +229,16 @@ export default function UniquePrototype() {
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Текущий экран в телефоне</div>
-                <div className="mt-4 rounded-2xl bg-slate-900 px-5 py-4 text-white">
-                  <div className="text-xs uppercase tracking-[0.2em] text-slate-300">{current.title}</div>
-                  <div className="mt-2 text-xl font-semibold">{current.screens[currentScreenIndex].name}</div>
-                  <div className="mt-1 text-sm text-slate-300">{current.screens[currentScreenIndex].subtitle}</div>
+              {!isCompactMobile && (
+                <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+                  <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Текущий экран в телефоне</div>
+                  <div className="mt-4 rounded-2xl bg-slate-900 px-5 py-4 text-white">
+                    <div className="text-xs uppercase tracking-[0.2em] text-slate-300">{current.title}</div>
+                    <div className="mt-2 text-xl font-semibold">{current.screens[currentScreenIndex].name}</div>
+                    <div className="mt-1 text-sm text-slate-300">{current.screens[currentScreenIndex].subtitle}</div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="flex justify-center lg:sticky lg:top-8">
@@ -233,7 +262,9 @@ export default function UniquePrototype() {
             На лендинге можно раскрыть весь функционал по ключевым ролям
           </h2>
           <p className="mt-4 text-lg leading-8 text-slate-600">
-            {isCompactMobile
+            {isUltraMobile
+              ? 'Карта экранов по режимам.'
+              : isCompactMobile
               ? 'Краткая карта экранов по всем ключевым режимам продукта.'
               : 'Ниже собран полный набор экранов по родительскому, детскому, совместному и рейтинговому опыту. Это уже выглядит как структурированная демонстрация продукта, а не как внутренний список пожеланий.'}
           </p>
