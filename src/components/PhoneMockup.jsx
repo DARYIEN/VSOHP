@@ -1,8 +1,10 @@
-function ScreenTab({ active, onClick, label }) {
+function ScreenTab({ active, onClick, label, compact = false }) {
   return (
     <button
       onClick={onClick}
-      className={`whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] transition ${
+      className={`whitespace-nowrap rounded-full transition ${
+        compact ? 'px-2 py-0.5 text-[9px]' : 'px-2.5 py-1 text-[10px]'
+      } ${
         active ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-600'
       }`}
     >
@@ -127,14 +129,19 @@ function HistoryRoutesView({ screen, compact = false }) {
   );
 }
 
-function LeaderboardRow({ row, units, highlight = false }) {
+function LeaderboardRow({ row, units, highlight = false, compact = false }) {
+  const rowGrid = compact ? 'grid-cols-[20px_1fr_44px_40px]' : 'grid-cols-[28px_1fr_68px_54px]';
+  const rowText = compact ? 'text-[9px]' : 'text-[11px]';
+  const classText = compact ? 'text-[9px]' : 'text-[10px]';
+  const rowPadding = compact ? 'px-2 py-1.5' : 'px-2.5 py-2';
+
   return (
-    <div className={`grid grid-cols-[28px_1fr_68px_54px] items-center gap-1.5 rounded-lg px-2.5 py-2 text-[11px] ${
+    <div className={`grid ${rowGrid} items-center gap-1.5 rounded-lg ${rowPadding} ${rowText} ${
       highlight ? 'border border-emerald-200 bg-emerald-50 text-emerald-900' : 'bg-white text-slate-700'
     }`}>
       <div className="font-semibold">{row.place}</div>
       <div className="truncate">{row.name}</div>
-      <div className="truncate text-[10px] text-slate-500">{row.className}</div>
+      <div className={`truncate text-slate-500 ${classText}`}>{row.className}</div>
       <div className="text-right font-semibold">
         {row.points}
         {units ? ` ${units}` : ''}
@@ -145,17 +152,19 @@ function LeaderboardRow({ row, units, highlight = false }) {
 
 function LeaderboardView({ leaderboard, compact = false }) {
   const units = leaderboard.units || 'XP';
-  const topRows = compact ? leaderboard.rows.slice(0, 3) : leaderboard.rows;
+  const topRows = compact ? leaderboard.rows.slice(0, 2) : leaderboard.rows;
+  const headGrid = compact ? 'grid-cols-[20px_1fr_44px_40px]' : 'grid-cols-[28px_1fr_68px_54px]';
+  const headText = compact ? 'text-[9px]' : 'text-[10px]';
 
   return (
     <div className="space-y-2.5">
-      <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
-        <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-slate-500">
+      <div className={`rounded-[1rem] border border-slate-200 bg-slate-50 ${compact ? 'p-2' : 'p-2.5'}`}>
+        <div className={`flex items-center justify-between uppercase tracking-[0.16em] text-slate-500 ${headText}`}>
           <span>{leaderboard.title}</span>
           <span>Обновлено</span>
         </div>
-        <div className="mt-2 rounded-lg bg-slate-100 px-2.5 py-1.5 text-[10px] text-slate-500">
-          <div className="grid grid-cols-[28px_1fr_68px_54px] gap-1.5">
+        <div className={`mt-2 rounded-lg bg-slate-100 text-slate-500 ${compact ? 'px-2 py-1' : 'px-2.5 py-1.5'} ${headText}`}>
+          <div className={`grid ${headGrid} gap-1.5`}>
             <span>Место</span>
             <span>Ученик</span>
             <span>Класс</span>
@@ -164,20 +173,20 @@ function LeaderboardView({ leaderboard, compact = false }) {
         </div>
         <div className="mt-1.5 space-y-1.5">
           {topRows.map((row) => (
-            <LeaderboardRow key={`${row.place}-${row.name}`} row={row} units={units} />
+            <LeaderboardRow key={`${row.place}-${row.name}`} row={row} units={units} compact={compact} />
           ))}
         </div>
       </div>
 
-      <div className="rounded-[1rem] border border-emerald-200 bg-emerald-50 p-2.5">
-        <div className="mb-1.5 text-[10px] uppercase tracking-[0.16em] text-emerald-700">Твоя позиция</div>
-        <LeaderboardRow row={leaderboard.userRow} units={units} highlight />
+      <div className={`rounded-[1rem] border border-emerald-200 bg-emerald-50 ${compact ? 'p-2' : 'p-2.5'}`}>
+        <div className={`mb-1.5 uppercase tracking-[0.16em] text-emerald-700 ${headText}`}>Твоя позиция</div>
+        <LeaderboardRow row={leaderboard.userRow} units={units} highlight compact={compact} />
       </div>
     </div>
   );
 }
 
-function BottomNav({ activeMode, onModeChange }) {
+function BottomNav({ activeMode, onModeChange, compact = false }) {
   const tabs = [
     { key: 'parent', label: 'Родитель' },
     { key: 'child', label: 'Ребенок' },
@@ -186,7 +195,7 @@ function BottomNav({ activeMode, onModeChange }) {
   ];
 
   return (
-    <div className="mt-2 rounded-[1rem] border border-slate-200 bg-slate-50 px-2 py-1.5">
+    <div className={`mt-2 rounded-[1rem] border border-slate-200 bg-slate-50 ${compact ? 'px-1.5 py-1' : 'px-2 py-1.5'}`}>
       <div className="grid grid-cols-4 gap-1">
         {tabs.map((tab) => {
           const active = tab.key === activeMode;
@@ -194,7 +203,7 @@ function BottomNav({ activeMode, onModeChange }) {
             <button
               key={tab.key}
               onClick={() => onModeChange(tab.key)}
-              className={`rounded-lg px-1.5 py-1 text-center text-[10px] ${
+              className={`rounded-lg text-center ${compact ? 'px-1 py-0.5 text-[9px]' : 'px-1.5 py-1 text-[10px]'} ${
                 active ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'
               }`}
             >
@@ -218,27 +227,27 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
   const showLeaderboard = modeKey === 'rating' && Boolean(screen.leaderboard);
 
   return (
-    <div className={`relative mx-auto max-w-full ${compact ? 'w-[252px] sm:w-[268px] md:w-[284px]' : 'w-[280px] sm:w-[295px] md:w-[310px]'}`}>
+    <div className={`relative mx-auto max-w-full ${compact ? 'w-[238px] sm:w-[252px] md:w-[268px]' : 'w-[280px] sm:w-[295px] md:w-[310px]'}`}>
       <div className={`absolute -inset-5 rounded-[3rem] ${mode.glow} blur-3xl`} />
       <div className="relative rounded-[2.8rem] border-[8px] border-slate-950 bg-slate-950 p-[8px] shadow-[0_22px_52px_rgba(15,23,42,0.24)]">
         <div className="relative overflow-hidden rounded-[2.2rem] bg-[#f8fafc]">
           <div className="absolute left-1/2 top-2.5 z-20 h-6 w-32 -translate-x-1/2 rounded-full bg-black" />
           <div className={`relative aspect-[1170/2532] bg-gradient-to-b ${mode.accent} p-[1px]`}>
             <div className="flex h-full flex-col bg-[#f8fafc]">
-              <div className="flex items-center justify-between px-5 pb-2.5 pt-4 text-[12px] font-semibold text-slate-700">
+              <div className={`flex items-center justify-between px-5 pb-2.5 pt-4 font-semibold text-slate-700 ${compact ? 'text-[11px]' : 'text-[12px]'}`}>
                 <span>9:41</span>
                 <span>5G</span>
               </div>
 
               <div className="flex min-h-0 flex-1 flex-col px-3 pb-3">
-                <div className="rounded-[1.1rem] border border-slate-200 bg-white px-3 py-2.5">
+                <div className={`rounded-[1.1rem] border border-slate-200 bg-white ${compact ? 'px-2.5 py-2' : 'px-3 py-2.5'}`}>
                   <div className="flex items-center justify-between">
-                    <div className="text-[10px] uppercase tracking-[0.16em] text-slate-500">{mode.title}</div>
-                    <div className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600">
+                    <div className={`uppercase tracking-[0.16em] text-slate-500 ${compact ? 'text-[9px]' : 'text-[10px]'}`}>{mode.title}</div>
+                    <div className={`rounded-full bg-slate-100 text-slate-600 ${compact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'}`}>
                       {screenIndex + 1}/{mode.screens.length}
                     </div>
                   </div>
-                  <div className="mt-1.5 text-sm font-semibold text-slate-900">{screen.title}</div>
+                  <div className={`mt-1.5 font-semibold text-slate-900 ${compact ? 'text-[12px] leading-4' : 'text-sm'}`}>{screen.title}</div>
                   {!compact && <div className="mt-1 text-[11px] leading-4 text-slate-600">{screen.subtitle}</div>}
                 </div>
 
@@ -249,12 +258,13 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
                       active={index === screenIndex}
                       onClick={() => onScreenChange(index)}
                       label={shortLabel(item)}
+                      compact={compact}
                     />
                   ))}
                 </div>
 
-                <div className="mt-1 flex min-h-0 flex-1 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-3 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-                  <div className="rounded-[1rem] border border-slate-200 bg-slate-50 px-3 py-2 text-[12px] leading-5 text-slate-700">
+                <div className={`mt-1 flex min-h-0 flex-1 flex-col rounded-[1.5rem] border border-slate-200 bg-white shadow-[0_10px_24px_rgba(15,23,42,0.08)] ${compact ? 'p-2.5' : 'p-3'}`}>
+                  <div className={`rounded-[1rem] border border-slate-200 bg-slate-50 text-slate-700 ${compact ? 'px-2.5 py-1.5 text-[10px] leading-4' : 'px-3 py-2 text-[12px] leading-5'}`}>
                     {screen.notice}
                   </div>
 
@@ -276,9 +286,9 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
                     <>
                       <div className="mt-2.5 grid grid-cols-2 gap-2">
                         {metrics.map(([label, value]) => (
-                          <div key={label} className="rounded-[1rem] border border-slate-200 bg-white p-2">
-                            <div className="text-[10px] uppercase tracking-[0.18em] text-slate-400">{label}</div>
-                            <div className="mt-1 text-sm font-semibold text-slate-900">{value}</div>
+                          <div key={label} className={`rounded-[1rem] border border-slate-200 bg-white ${compact ? 'p-1.5' : 'p-2'}`}>
+                            <div className={`uppercase tracking-[0.18em] text-slate-400 ${compact ? 'text-[8px]' : 'text-[10px]'}`}>{label}</div>
+                            <div className={`mt-1 font-semibold text-slate-900 ${compact ? 'text-[11px]' : 'text-sm'}`}>{value}</div>
                           </div>
                         ))}
                       </div>
@@ -287,7 +297,7 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
                         <div className="rounded-[1rem] border border-slate-200 bg-slate-50 p-2.5">
                           <div className="space-y-1.5">
                             {visibleItems.map((item) => (
-                              <div key={item} className="flex items-center justify-between rounded-lg bg-white px-2.5 py-2 text-[11px] text-slate-600">
+                              <div key={item} className={`flex items-center justify-between rounded-lg bg-white text-slate-600 ${compact ? 'px-2 py-1.5 text-[10px]' : 'px-2.5 py-2 text-[11px]'}`}>
                                 <span>{item}</span>
                                 <span className="text-slate-400">›</span>
                               </div>
@@ -298,7 +308,7 @@ export default function PhoneMockup({ mode, modeKey, screenIndex, onScreenChange
                     </>
                   )}
 
-                  <BottomNav activeMode={modeKey} onModeChange={onModeChange} />
+                  <BottomNav activeMode={modeKey} onModeChange={onModeChange} compact={compact} />
                 </div>
 
                 <div className="px-6 pb-1 pt-3">
