@@ -18,6 +18,19 @@ function ModeButton({ active, onClick, label }) {
   );
 }
 
+function ScreenNameButton({ active, onClick, label, index }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-2xl px-3 py-2 text-left text-sm transition ${
+        active ? 'bg-slate-900 text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-700'
+      }`}
+    >
+      {index + 1}. {label}
+    </button>
+  );
+}
+
 export default function UniquePrototype() {
   const [tab, setTab] = useState('parent');
   const [screenIndexes, setScreenIndexes] = useState({
@@ -168,6 +181,29 @@ export default function UniquePrototype() {
             <ModeButton active={tab === 'rating'} onClick={() => setTab('rating')} label="Рейтинг" />
           </div>
 
+          <div className="mt-5 rounded-[1.6rem] border border-slate-200 bg-slate-50 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="text-sm text-slate-600">
+                Экраны режима: <span className="font-semibold text-slate-900">{current.screens.length}</span>
+              </div>
+              <div className="text-sm text-slate-600">
+                Сейчас открыт: <span className="font-semibold text-slate-900">{currentScreenIndex + 1}</span> / {current.screens.length}
+              </div>
+            </div>
+
+            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {current.screens.map((screen, index) => (
+                <ScreenNameButton
+                  key={screen.name}
+                  index={index}
+                  label={screen.name}
+                  active={currentScreenIndex === index}
+                  onClick={() => handleScreenChange(index)}
+                />
+              ))}
+            </div>
+          </div>
+
           <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1.02fr_0.98fr]">
             <div className="space-y-6">
               <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8">
@@ -196,21 +232,11 @@ export default function UniquePrototype() {
               </div>
 
               <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Экраны режима</div>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  {current.screens.map((screen, index) => (
-                    <button
-                      key={screen.name}
-                      onClick={() => handleScreenChange(index)}
-                      className={`rounded-2xl px-4 py-3 text-left transition ${
-                        currentScreenIndex === index
-                          ? 'bg-slate-900 text-white shadow-sm'
-                          : 'border border-slate-200 bg-slate-50 text-slate-700'
-                      }`}
-                    >
-                      {screen.name}
-                    </button>
-                  ))}
+                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Текущий экран в телефоне</div>
+                <div className="mt-4 rounded-2xl bg-slate-900 px-5 py-4 text-white">
+                  <div className="text-xs uppercase tracking-[0.2em] text-slate-300">{current.title}</div>
+                  <div className="mt-2 text-xl font-semibold">{current.screens[currentScreenIndex].name}</div>
+                  <div className="mt-1 text-sm text-slate-300">{current.screens[currentScreenIndex].subtitle}</div>
                 </div>
               </div>
             </div>
