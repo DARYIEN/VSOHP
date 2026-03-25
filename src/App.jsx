@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PhoneMockup from './components/PhoneMockup';
-import { FeatureCard, FullScreenGroup, ScreenGroupCard } from './components/ContentBlocks';
-import { canvaItems, modes, screenGroups } from './data/productData';
+import { FeatureCard, ScreenGroupCard } from './components/ContentBlocks';
+import { modes, screenGroups } from './data/productData';
 
 function ModeButton({ active, onClick, label }) {
   return (
@@ -18,19 +18,6 @@ function ModeButton({ active, onClick, label }) {
   );
 }
 
-function ScreenNameButton({ active, onClick, label, index }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`rounded-2xl px-3 py-2 text-left text-sm transition ${
-        active ? 'bg-slate-900 text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-700'
-      }`}
-    >
-      {index + 1}. {label}
-    </button>
-  );
-}
-
 export default function UniquePrototype() {
   const [tab, setTab] = useState('parent');
   const [screenIndexes, setScreenIndexes] = useState({
@@ -41,26 +28,13 @@ export default function UniquePrototype() {
   });
 
   const current = modes[tab];
-  const currentScreenIndex = screenIndexes[tab];
-
-  const fullScreenGroups = Object.values(modes).map((mode) => ({
-    title: mode.title,
-    caption: mode.desc,
-    accent: mode.accent,
-    cards: mode.screens.map((screen) => ({
-      name: screen.name,
-      subtitle: screen.subtitle,
-      items: [
-        ...screen.metrics.map(([label, value]) => `${label}: ${value}`),
-        ...screen.sections.flatMap((section) => section.items.slice(0, 2)),
-      ],
-    })),
-  }));
+  const currentScreenIndex = Math.min(screenIndexes[tab], current.screens.length - 1);
 
   const handleScreenChange = (index) => {
+    const clampedIndex = Math.max(0, Math.min(index, current.screens.length - 1));
     setScreenIndexes((prev) => ({
       ...prev,
-      [tab]: index,
+      [tab]: clampedIndex,
     }));
   };
 
@@ -111,17 +85,11 @@ export default function UniquePrototype() {
                 >
                   Смотреть экраны
                 </a>
-                <a
-                  href="#canva"
-                  className="rounded-full border border-slate-300 bg-white px-6 py-3 text-slate-800 transition hover:border-slate-400"
-                >
-                  Презентация в Canva
-                </a>
               </div>
 
               <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
                 {[
-                  ['Родитель', 'Статус маршрута и ETA'],
+                  ['Родитель', 'Статус маршрута и время до школы'],
                   ['Ребенок', 'XP, streak и ачивки'],
                   ['Пати', 'Совместные походы'],
                   ['Рейтинг', 'Друзья, школа, город'],
@@ -135,7 +103,12 @@ export default function UniquePrototype() {
             </div>
 
             <div className="flex justify-center lg:justify-end">
-              <PhoneMockup mode={current} screenIndex={currentScreenIndex} onScreenChange={handleScreenChange} />
+              <PhoneMockup
+                mode={current}
+                modeKey={tab}
+                screenIndex={currentScreenIndex}
+                onScreenChange={handleScreenChange}
+              />
             </div>
           </div>
         </div>
@@ -169,8 +142,8 @@ export default function UniquePrototype() {
               Каждый экран можно открыть прямо внутри телефона
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
-              Сначала переключайте режимы продукта, а затем листайте отдельные экраны внутри самого
-              телефона. Так лендинг уже работает как кликабельная презентация основного UX.
+              Переключайте режимы продукта, а навигация по экранным состояниям происходит прямо в
+              интерфейсе телефона, как в реальном приложении.
             </p>
           </div>
 
@@ -179,29 +152,6 @@ export default function UniquePrototype() {
             <ModeButton active={tab === 'child'} onClick={() => setTab('child')} label="Ребенок" />
             <ModeButton active={tab === 'party'} onClick={() => setTab('party')} label="Пати" />
             <ModeButton active={tab === 'rating'} onClick={() => setTab('rating')} label="Рейтинг" />
-          </div>
-
-          <div className="mt-5 rounded-[1.6rem] border border-slate-200 bg-slate-50 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="text-sm text-slate-600">
-                Экраны режима: <span className="font-semibold text-slate-900">{current.screens.length}</span>
-              </div>
-              <div className="text-sm text-slate-600">
-                Сейчас открыт: <span className="font-semibold text-slate-900">{currentScreenIndex + 1}</span> / {current.screens.length}
-              </div>
-            </div>
-
-            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {current.screens.map((screen, index) => (
-                <ScreenNameButton
-                  key={screen.name}
-                  index={index}
-                  label={screen.name}
-                  active={currentScreenIndex === index}
-                  onClick={() => handleScreenChange(index)}
-                />
-              ))}
-            </div>
           </div>
 
           <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1.02fr_0.98fr]">
@@ -242,7 +192,12 @@ export default function UniquePrototype() {
             </div>
 
             <div className="flex justify-center lg:sticky lg:top-8">
-              <PhoneMockup mode={current} screenIndex={currentScreenIndex} onScreenChange={handleScreenChange} />
+              <PhoneMockup
+                mode={current}
+                modeKey={tab}
+                screenIndex={currentScreenIndex}
+                onScreenChange={handleScreenChange}
+              />
             </div>
           </div>
         </div>
@@ -265,43 +220,6 @@ export default function UniquePrototype() {
           {screenGroups.map((group) => (
             <ScreenGroupCard key={group.title} title={group.title} caption={group.caption} items={group.items} />
           ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-4 pb-16 md:px-10 lg:px-12">
-        <div className="space-y-8">
-          {fullScreenGroups.map((group) => (
-            <FullScreenGroup key={group.title} group={group} />
-          ))}
-        </div>
-      </section>
-
-      <section id="canva" className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-16 md:px-10 lg:px-12">
-          <div className="grid items-start gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <div>
-              <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Презентация</div>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">Место для ссылки на Canva</h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">
-                Здесь можно разместить ссылку на готовую презентацию или кликабельный прототип, чтобы
-                быстро переходить от лендинга к материалам для питча.
-              </p>
-              <div className="mt-6 rounded-[1.8rem] border border-dashed border-slate-300 bg-slate-50 px-5 py-6 text-slate-500">
-                Вставьте ссылку на Canva: https://canva.com/...
-              </div>
-            </div>
-
-            <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8">
-              <div className="text-xl font-semibold text-slate-900">Что можно найти в Canva</div>
-              <div className="mt-6 grid gap-3">
-                {canvaItems.map((item) => (
-                  <div key={item} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-700">
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </section>
     </div>
