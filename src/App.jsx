@@ -1,680 +1,14 @@
 import { useState } from 'react';
+import PhoneMockup from './components/PhoneMockup';
+import { FeatureCard, FullScreenGroup, ScreenGroupCard } from './components/ContentBlocks';
+import { canvaItems, modes, screenGroups } from './data/productData';
 
-const tabs = {
-  parent: {
-    title: 'Родительский режим',
-    badge: 'Контроль без тревоги',
-    accent: 'from-sky-500 to-cyan-400',
-    glow: 'bg-sky-200/60',
-    desc: 'Родитель видит только то, что действительно важно во время пути: где сейчас ребенок, как проходит маршрут, когда ожидать прибытие и есть ли впереди потенциально сложный участок.',
-    screenTitle: 'Маршрут в школу',
-    screenSubtitle: 'Идет по обычному пути • ETA 5 минут',
-    alert: 'Впереди регулируемый переход',
-    heroStats: [
-      ['Прогресс', '72%'],
-      ['В пути', '12 мин'],
-      ['Среднее время', '14 мин'],
-      ['Статус', 'Все спокойно'],
-    ],
-    featureBlocks: [
-      {
-        title: 'Что видит родитель',
-        text: 'Живой статус маршрута, уведомление о старте и завершении, ETA, мягкие сигналы о потенциально рисковых точках и короткая история последних проходов.',
-      },
-      {
-        title: 'Как выглядит экран',
-        text: 'Большая карта маршрута, карточка статуса, блок безопасности, нижняя панель с быстрыми действиями и понятные показатели без перегруза тревожными деталями.',
-      },
-    ],
-    panels: [
-      'Старт пути и подтверждение, что маршрут активировался',
-      'Текущий прогресс с ETA и отклонением от обычного темпа',
-      'Карточка сложного участка с нейтральной подачей',
-      'История: вовремя, дольше обычного, маршрут завершен',
-    ],
-    extraScreens: [
-      'Подключение ребенка к аккаунту родителя',
-      'Разрешения на геолокацию и уведомления',
-      'Активный маршрут',
-      'Маршрут завершен',
-      'История последних маршрутов',
-      'Отклонение от привычного пути',
-    ],
-    detailedScreens: [
-      {
-        name: 'Подключение ребенка',
-        subtitle: 'Быстрый старт и привязка',
-        tone: 'bg-sky-50 border-sky-100',
-        items: [
-          'QR-код или код приглашения для привязки',
-          'Выбор школы, адреса дома и основных маршрутов',
-          'Настройка уведомлений о старте и завершении',
-          'Короткое объяснение, что трекинг работает только во время пути',
-        ],
-      },
-      {
-        name: 'Активный маршрут',
-        subtitle: 'Главный экран спокойного контроля',
-        tone: 'bg-white',
-        items: [
-          'Карта с текущим положением ребенка и прогрессом пути',
-          'ETA, время в пути и сравнение с обычным временем',
-          'Статус: все спокойно / задержка / отклонение от маршрута',
-          'Быстрые действия: позвонить, открыть историю, посмотреть детали',
-        ],
-      },
-      {
-        name: 'Сигнал по участку',
-        subtitle: 'Нейтральная подача без тревожного дизайна',
-        tone: 'bg-amber-50 border-amber-100',
-        items: [
-          'Карточка потенциально сложного места впереди',
-          'Короткая причина: переход, развязка, оживленная улица',
-          'Расстояние до участка и ожидаемое время прохода',
-          'Рекомендация без алармизма: просто обратить внимание',
-        ],
-      },
-      {
-        name: 'История маршрутов',
-        subtitle: 'Короткая аналитика для родителя',
-        tone: 'bg-slate-50 border-slate-200',
-        items: [
-          'Последние походы в школу и обратно',
-          'Время старта, длительность и факт своевременного прибытия',
-          'Повторяющиеся отклонения или задержки по дням',
-          'Минимальная статистика без перегрузки деталями',
-        ],
-      },
-    ],
-  },
-  child: {
-    title: 'Детский режим',
-    badge: 'Игровая мотивация',
-    accent: 'from-amber-400 to-orange-500',
-    glow: 'bg-amber-200/70',
-    desc: 'Для ребенка это не контроль, а ежедневный челлендж: путь приносит XP, поддерживает серию дней, открывает достижения и помогает двигаться вверх в рейтингах.',
-    screenTitle: 'Утренний маршрут',
-    screenSubtitle: 'Сегодня можно получить до 120 XP',
-    alert: 'Еще 1 отметка до новой ачивки',
-    heroStats: [
-      ['XP сегодня', '+85'],
-      ['Серия', '6 дней'],
-      ['Ачивки', '14'],
-      ['Место', '#12'],
-    ],
-    featureBlocks: [
-      {
-        title: 'Что мотивирует ребенка',
-        text: 'Очки за регулярность, бонусы за серию, визуальный прогресс, ачивки за маршруты и легкое соревнование с друзьями и школой.',
-      },
-      {
-        title: 'Как выглядит экран',
-        text: 'Игровой статус маршрута, прогресс до награды дня, видимые достижения, персональный рейтинг и понятный призыв идти регулярно.',
-      },
-    ],
-    panels: [
-      'Главная игровая с текущим маршрутом и XP за день',
-      'Профиль с коллекцией ачивок и streak',
-      'Лента наград за последние маршруты',
-      'Рейтинг друзей, школы и города',
-    ],
-    extraScreens: [
-      'Главный экран ребенка',
-      'Профиль и достижения',
-      'Дневная награда',
-      'Серия дней и прогресс к следующему уровню',
-      'Рейтинг друзей',
-      'Экран новой ачивки',
-    ],
-    detailedScreens: [
-      {
-        name: 'Главная игровая',
-        subtitle: 'Маршрут как ежедневный челлендж',
-        tone: 'bg-amber-50 border-amber-100',
-        items: [
-          'Сколько XP можно получить сегодня',
-          'Прогресс текущего маршрута и бонус за завершение',
-          'Серия дней и подсказка, как не потерять streak',
-          'Быстрый переход к ачивкам и рейтингу',
-        ],
-      },
-      {
-        name: 'Экран награды',
-        subtitle: 'Момент дофамина после маршрута',
-        tone: 'bg-orange-50 border-orange-100',
-        items: [
-          'Большой блок с полученными XP и наградой дня',
-          'Причины начисления: регулярность, активность, пати',
-          'Прогресс до следующего уровня или значка',
-          'Кнопка поделиться результатом внутри приложения',
-        ],
-      },
-      {
-        name: 'Профиль и ачивки',
-        subtitle: 'Личный прогресс в одном месте',
-        tone: 'bg-white',
-        items: [
-          'Собранные достижения и редкие бейджи',
-          'Статистика по маршрутам, дням и лучшей серии',
-          'Выделенные цели недели',
-          'Визуальный прогресс до новой ачивки',
-        ],
-      },
-      {
-        name: 'Рейтинг друзей',
-        subtitle: 'Социальная динамика без перегруза',
-        tone: 'bg-slate-50 border-slate-200',
-        items: [
-          'Позиция среди друзей и ближайшие соперники',
-          'Кто поднялся выше за неделю',
-          'Сколько XP не хватает до следующего места',
-          'Легкие мотивационные подсказки на день',
-        ],
-      },
-    ],
-  },
-  party: {
-    title: 'Пати-маршрут',
-    badge: 'Идти вместе интереснее',
-    accent: 'from-violet-500 to-fuchsia-500',
-    glow: 'bg-violet-200/70',
-    desc: 'Ребенок может идти не один, а вместе с небольшой группой. Это усиливает привычку, добавляет ощущение движения вместе и делает дорогу более предсказуемой для всех участников.',
-    screenTitle: 'Пати на 08:10',
-    screenSubtitle: '3 участника уже в пути, 1 подходит к точке',
-    alert: 'Сбор через 6 минут у первой точки',
-    heroStats: [
-      ['Участников', '4'],
-      ['На месте', '2'],
-      ['До старта', '6 мин'],
-      ['Общий streak', '11'],
-    ],
-    featureBlocks: [
-      {
-        title: 'Что дает пати',
-        text: 'Совместный путь в школу, понятный состав группы, точки сбора, общий прогресс маршрута и дополнительный стимул не пропускать дорогу пешком.',
-      },
-      {
-        title: 'Как выглядит экран',
-        text: 'Список участников, время сбора, статусы кто уже вышел, кто подходит, и визуальный общий маршрут всей мини-группы.',
-      },
-    ],
-    panels: [
-      'Создание пати и выбор времени выхода',
-      'Экран точки сбора и статусов участников',
-      'Общий прогресс пати по маршруту',
-      'Завершение совместного пути и общий бонус',
-    ],
-    extraScreens: [
-      'Создание пати',
-      'Вступление по коду или приглашению',
-      'Точка сбора',
-      'Пати в пути',
-      'Завершенный общий маршрут',
-      'История совместных походов',
-    ],
-    detailedScreens: [
-      {
-        name: 'Создание пати',
-        subtitle: 'Запуск совместного маршрута',
-        tone: 'bg-violet-50 border-violet-100',
-        items: [
-          'Выбор времени выхода и точки сбора',
-          'Приглашение друзей по коду или ссылке',
-          'Ограничение размера группы',
-          'Подтверждение общего маршрута до школы',
-        ],
-      },
-      {
-        name: 'Точка сбора',
-        subtitle: 'Понятный статус перед стартом',
-        tone: 'bg-fuchsia-50 border-fuchsia-100',
-        items: [
-          'Кто уже на месте, кто подходит, кто еще не вышел',
-          'Таймер до общего старта',
-          'Мини-карта точки встречи',
-          'Уведомление, если кто-то опаздывает',
-        ],
-      },
-      {
-        name: 'Пати в пути',
-        subtitle: 'Общий прогресс группы',
-        tone: 'bg-white',
-        items: [
-          'Общий маршрут и прогресс пати',
-          'Статусы участников внутри группы',
-          'Бонус за прохождение вместе',
-          'Фиксация, если кто-то отделился от маршрута',
-        ],
-      },
-      {
-        name: 'Общий финиш',
-        subtitle: 'Совместная награда и история',
-        tone: 'bg-slate-50 border-slate-200',
-        items: [
-          'Подтверждение, что группа дошла до школы',
-          'Общий бонус и обновление streak пати',
-          'Итоги маршрута по времени и составу',
-          'Сохранение похода в историю совместных проходов',
-        ],
-      },
-    ],
-  },
-  rating: {
-    title: 'Рейтинги и достижения',
-    badge: 'Соревнование как драйвер',
-    accent: 'from-emerald-400 to-teal-500',
-    glow: 'bg-emerald-200/70',
-    desc: 'Рейтинг превращает ежедневную дорогу в заметное достижение. Можно сравнивать себя с друзьями, классом, школой и городом по понятным и прозрачным метрикам.',
-    screenTitle: 'Рейтинг школы',
-    screenSubtitle: 'Неделя 12 • обновлено сегодня',
-    alert: 'До топ-10 не хватает 35 XP',
-    heroStats: [
-      ['Ты', '#12'],
-      ['Друзья', '#4'],
-      ['Класс', '#2'],
-      ['Город', 'топ 8%'],
-    ],
-    featureBlocks: [
-      {
-        title: 'Что получает продукт',
-        text: 'Рейтинг удерживает рутину, дает понятную цель на неделю, поддерживает социальную динамику внутри школы и работает как естественный повод возвращаться в приложение.',
-      },
-      {
-        title: 'Как выглядит экран',
-        text: 'Выбор лидерборда, позиция пользователя, ближайшие соперники, недельная динамика и карточки достижений, влияющих на очки.',
-      },
-    ],
-    panels: [
-      'Рейтинг друзей и ближайших соперников',
-      'Рейтинг школы по неделе',
-      'Позиция класса и общий вклад',
-      'Карточки достижений, которые ускоряют рост',
-    ],
-    extraScreens: [
-      'Рейтинг друзей',
-      'Рейтинг класса',
-      'Рейтинг школы',
-      'Рейтинг города',
-      'Детальная карточка достижения',
-      'Недельная динамика позиции',
-    ],
-    detailedScreens: [
-      {
-        name: 'Рейтинг друзей',
-        subtitle: 'Самый частый сценарий возврата',
-        tone: 'bg-emerald-50 border-emerald-100',
-        items: [
-          'Текущая позиция и ближайшие соседи по очкам',
-          'Разница в XP до следующего места',
-          'Изменение позиции за последние дни',
-          'Быстрый переход к профилю достижений',
-        ],
-      },
-      {
-        name: 'Рейтинг класса',
-        subtitle: 'Командная динамика внутри школы',
-        tone: 'bg-teal-50 border-teal-100',
-        items: [
-          'Какой класс лидирует по регулярности',
-          'Средний вклад участников класса',
-          'Серия побед класса по неделям',
-          'Карточка общего командного результата',
-        ],
-      },
-      {
-        name: 'Рейтинг школы',
-        subtitle: 'Основной презентационный экран',
-        tone: 'bg-white',
-        items: [
-          'Топ пользователей недели по школе',
-          'Фильтры по метрикам: регулярность, серия, активность',
-          'Выделение позиции текущего ребенка',
-          'Прогноз, как можно подняться выше',
-        ],
-      },
-      {
-        name: 'Карточка достижения',
-        subtitle: 'Что влияет на продвижение вверх',
-        tone: 'bg-slate-50 border-slate-200',
-        items: [
-          'Название достижения и сколько оно дает очков',
-          'Условия открытия и текущий прогресс',
-          'Связанные действия: пройти маршрут, собрать streak, идти в пати',
-          'История уже открытых достижений',
-        ],
-      },
-    ],
-  },
-};
-
-const screenGroups = [
-  {
-    title: 'Родительские экраны',
-    caption: 'Безопасность, статус и спокойная подача',
-    items: [
-      'Подключение ребенка',
-      'Разрешения и доверенные маршруты',
-      'Активный маршрут',
-      'Отклонение от пути',
-      'Маршрут завершен',
-      'История маршрутов',
-    ],
-  },
-  {
-    title: 'Детские экраны',
-    caption: 'Игровой слой и ежедневная мотивация',
-    items: [
-      'Главная игровая',
-      'Прогресс дня',
-      'Профиль и ачивки',
-      'Экран новой награды',
-      'Серия дней',
-      'Персональная статистика',
-    ],
-  },
-  {
-    title: 'Пати и совместные сценарии',
-    caption: 'Маршруты вместе и социальная динамика',
-    items: [
-      'Создание пати',
-      'Вход по приглашению',
-      'Точка сбора',
-      'Пати в пути',
-      'Общий финиш',
-      'История совместных походов',
-    ],
-  },
-  {
-    title: 'Рейтинги и достижения',
-    caption: 'Лидерборды и видимый прогресс',
-    items: [
-      'Рейтинг друзей',
-      'Рейтинг класса',
-      'Рейтинг школы',
-      'Рейтинг города',
-      'Карточка достижения',
-      'Недельная динамика',
-    ],
-  },
-];
-
-const fullScreenGroups = [
-  {
-    title: 'Родительские экраны',
-    caption: 'Безопасность, статус и спокойная подача',
-    accent: 'from-sky-500 to-cyan-400',
-    cards: [
-      {
-        name: 'Подключение ребенка',
-        subtitle: 'Первый запуск и привязка аккаунтов',
-        items: [
-          'Подключение по коду, QR или приглашению',
-          'Подтверждение роли родителя и ребенка',
-          'Проверка, что связка успешно создана',
-          'Переход к настройке маршрутов и разрешений',
-        ],
-      },
-      {
-        name: 'Разрешения и доверенные маршруты',
-        subtitle: 'Настройка базовой логики безопасности',
-        items: [
-          'Разрешение на геолокацию только во время маршрута',
-          'Разрешение на уведомления о старте и завершении',
-          'Добавление дома, школы и привычных путей',
-          'Выбор спокойной модели уведомлений без перегруза',
-        ],
-      },
-      {
-        name: 'Активный маршрут',
-        subtitle: 'Главный экран контроля в реальном времени',
-        items: [
-          'Карта текущего пути и прогресс маршрута',
-          'ETA, время в пути и текущий темп',
-          'Сигнал о сложном участке впереди',
-          'Быстрые действия: открыть детали, позвонить, перейти в историю',
-        ],
-      },
-      {
-        name: 'Отклонение от пути',
-        subtitle: 'Мягкая реакция на необычное движение',
-        items: [
-          'Фиксация отклонения от доверенного маршрута',
-          'Показывается, насколько сильное отклонение произошло',
-          'Подсказка: временная остановка, обход или новый путь',
-          'Ненавязчивое уведомление родителю без панического тона',
-        ],
-      },
-      {
-        name: 'Маршрут завершен',
-        subtitle: 'Спокойное подтверждение прибытия',
-        items: [
-          'Подтверждение, что ребенок дошел до школы или дома',
-          'Итоговое время, длина маршрута и сравнение с обычным днем',
-          'Фиксация “вовремя / немного дольше / быстрее обычного”',
-          'Переход к истории и статистике последних маршрутов',
-        ],
-      },
-      {
-        name: 'История маршрутов',
-        subtitle: 'Короткая история последних проходов',
-        items: [
-          'Список походов в школу и обратно по дням',
-          'Время старта, финиша и длительность',
-          'Повторяющиеся отклонения или задержки',
-          'Минимальная статистика без ощущения тотальной слежки',
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Детские экраны',
-    caption: 'Игровой слой и ежедневная мотивация',
-    accent: 'from-amber-400 to-orange-500',
-    cards: [
-      {
-        name: 'Главная игровая',
-        subtitle: 'Ежедневный маршрут как челлендж',
-        items: [
-          'Главный статус дня и кнопка старта пути',
-          'Сколько XP можно заработать сегодня',
-          'Быстрый доступ к наградам, streak и рейтингу',
-          'Яркий фокус на регулярности, а не на контроле',
-        ],
-      },
-      {
-        name: 'Прогресс дня',
-        subtitle: 'Движение к цели внутри одного маршрута',
-        items: [
-          'Сколько процентов пути уже пройдено',
-          'Промежуточные бонусы по дороге',
-          'Оставшееся расстояние до награды дня',
-          'Подсветка безопасного и привычного прохождения',
-        ],
-      },
-      {
-        name: 'Профиль и ачивки',
-        subtitle: 'Личная коллекция достижений',
-        items: [
-          'Текущий уровень и общая сумма XP',
-          'Список открытых достижений и редких бейджей',
-          'Незакрытые ачивки с прогрессом',
-          'Лучшие серии и персональные рекорды',
-        ],
-      },
-      {
-        name: 'Экран новой награды',
-        subtitle: 'Сильный момент после завершения пути',
-        items: [
-          'Большая карточка с новой наградой или XP-бонусом',
-          'Пояснение, за что она получена',
-          'Прогресс до следующего уровня',
-          'Кнопка продолжить, посмотреть профиль или рейтинг',
-        ],
-      },
-      {
-        name: 'Серия дней',
-        subtitle: 'Главная привычкообразующая механика',
-        items: [
-          'Текущая серия и ближайшая цель',
-          'Что нужно сделать, чтобы не потерять streak',
-          'Бонусы за длинные серии',
-          'Календарь последних успешных дней',
-        ],
-      },
-      {
-        name: 'Персональная статистика',
-        subtitle: 'Понятный прогресс без сложной аналитики',
-        items: [
-          'Сколько маршрутов пройдено за неделю и месяц',
-          'Среднее время в пути и лучший результат',
-          'Заработанные XP по периодам',
-          'Доля походов в одиночку и в пати',
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Пати и совместные сценарии',
-    caption: 'Маршруты вместе и социальная динамика',
-    accent: 'from-violet-500 to-fuchsia-500',
-    cards: [
-      {
-        name: 'Создание пати',
-        subtitle: 'Сбор группы на совместный маршрут',
-        items: [
-          'Выбор времени выхода и точки встречи',
-          'Лимит участников и название группы',
-          'Привязка к конкретному школьному маршруту',
-          'Генерация приглашения или кода входа',
-        ],
-      },
-      {
-        name: 'Вход по приглашению',
-        subtitle: 'Простой сценарий присоединения',
-        items: [
-          'Ввод кода или переход по ссылке',
-          'Просмотр состава пати до подтверждения',
-          'Понимание времени старта и точки сбора',
-          'Подтверждение участия одним действием',
-        ],
-      },
-      {
-        name: 'Точка сбора',
-        subtitle: 'Подготовка перед общим стартом',
-        items: [
-          'Кто уже пришел, кто в пути, кто опаздывает',
-          'Таймер до выхода группы',
-          'Мини-карта с точкой встречи',
-          'Общий чатовый или сигнальный статус группы',
-        ],
-      },
-      {
-        name: 'Пати в пути',
-        subtitle: 'Совместный прогресс маршрута',
-        items: [
-          'Общий маршрут и стадия прохождения',
-          'Статусы всех участников в рамках группы',
-          'Бонус за синхронное прохождение вместе',
-          'Фиксация, если кто-то отстает или отделился',
-        ],
-      },
-      {
-        name: 'Общий финиш',
-        subtitle: 'Подтверждение совместного завершения',
-        items: [
-          'Все ли участники добрались до школы',
-          'Время финиша группы и общий бонус',
-          'Обновление streak для участников пати',
-          'Переход к итогам и истории совместных походов',
-        ],
-      },
-      {
-        name: 'История совместных походов',
-        subtitle: 'Повторяемость и социальное удержание',
-        items: [
-          'Список прошлых пати-маршрутов по дням',
-          'Какие участники чаще всего ходят вместе',
-          'Сколько бонусов принес совместный формат',
-          'Лучшие серии конкретной группы',
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Рейтинги и достижения',
-    caption: 'Лидерборды и видимый прогресс',
-    accent: 'from-emerald-400 to-teal-500',
-    cards: [
-      {
-        name: 'Рейтинг друзей',
-        subtitle: 'Самый персональный лидерборд',
-        items: [
-          'Позиция пользователя среди друзей',
-          'Разница в XP до ближайшего места выше',
-          'Кто поднялся или упал за последние дни',
-          'Быстрый переход к профилю соперников',
-        ],
-      },
-      {
-        name: 'Рейтинг класса',
-        subtitle: 'Командная динамика внутри школы',
-        items: [
-          'Сравнение учеников внутри одного класса',
-          'Суммарный вклад в положение класса',
-          'Лидеры по регулярности и сериям',
-          'Понимание, как класс влияет на школьный рейтинг',
-        ],
-      },
-      {
-        name: 'Рейтинг школы',
-        subtitle: 'Ключевой презентационный экран',
-        items: [
-          'Топ участников недели по всей школе',
-          'Фильтры по метрикам: активность, регулярность, streak',
-          'Выделение позиции текущего пользователя',
-          'Подсказка, сколько нужно, чтобы подняться выше',
-        ],
-      },
-      {
-        name: 'Рейтинг города',
-        subtitle: 'Широкий социальный контекст',
-        items: [
-          'Сравнение школы или пользователя на уровне города',
-          'Процентиль и позиция среди всех участников',
-          'Тренды роста за неделю',
-          'Ощущение масштаба и дополнительный челлендж',
-        ],
-      },
-      {
-        name: 'Карточка достижения',
-        subtitle: 'Прозрачная логика начисления очков',
-        items: [
-          'Название достижения и сколько оно приносит',
-          'Прогресс к открытию и условия получения',
-          'Связь с маршрутами, streak и пати',
-          'История уже открытых достижений',
-        ],
-      },
-      {
-        name: 'Недельная динамика',
-        subtitle: 'Видимый рост позиции во времени',
-        items: [
-          'Как менялось место по дням недели',
-          'В какие дни был самый сильный рост',
-          'Что повлияло на рывок: серия, пати, активность',
-          'Прогноз, что нужно сделать для следующего скачка',
-        ],
-      },
-    ],
-  },
-];
-
-function tabButton(key, label, activeTab) {
+function ModeButton({ active, onClick, label }) {
   return (
     <button
-      onClick={() => activeTab.setTab(key)}
+      onClick={onClick}
       className={`rounded-full border px-4 py-2 text-sm transition md:text-base ${
-        activeTab.tab === key
+        active
           ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
           : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
       }`}
@@ -684,174 +18,38 @@ function tabButton(key, label, activeTab) {
   );
 }
 
-function PhonePreview({ current }) {
-  return (
-    <div className="relative mx-auto w-[410px] max-w-full">
-      <div className={`absolute -inset-6 rounded-[3.5rem] ${current.glow} blur-3xl`} />
-      <div className="relative rounded-[3.2rem] border-[10px] border-slate-950 bg-slate-950 p-[10px] shadow-[0_30px_90px_rgba(15,23,42,0.28)]">
-        <div className="relative overflow-hidden rounded-[2.6rem] bg-[#f8fafc]">
-          <div className="absolute left-1/2 top-3 z-20 h-7 w-36 -translate-x-1/2 rounded-full bg-black" />
-          <div className={`relative min-h-[740px] bg-gradient-to-b ${current.accent} p-[1px]`}>
-            <div className="min-h-[740px] bg-[#f8fafc]">
-              <div className="flex items-center justify-between px-6 pb-4 pt-5 text-[13px] font-semibold text-slate-700">
-                <span>9:41</span>
-                <span>5G</span>
-              </div>
-
-              <div className="px-5">
-                <div className={`rounded-[2rem] bg-gradient-to-br ${current.accent} p-5 text-white shadow-lg`}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-[11px] uppercase tracking-[0.24em] text-white/70">
-                        {current.badge}
-                      </div>
-                      <div className="mt-3 text-2xl font-semibold leading-tight">{current.screenTitle}</div>
-                      <div className="mt-2 text-sm leading-6 text-white/85">{current.screenSubtitle}</div>
-                    </div>
-                    <div className="rounded-2xl bg-white/20 px-3 py-2 text-sm font-medium">72%</div>
-                  </div>
-
-                  <div className="mt-5 rounded-[1.6rem] border border-white/20 bg-white/12 p-4 backdrop-blur-sm">
-                    <div className="flex items-center justify-between text-sm text-white/80">
-                      <span>Статус маршрута</span>
-                      <span>ETA 5 мин</span>
-                    </div>
-                    <div className="mt-4 h-28 overflow-hidden rounded-[1.3rem] bg-white/12">
-                      <svg viewBox="0 0 300 120" className="h-full w-full opacity-90">
-                        <path
-                          d="M18 96 C 58 86, 74 28, 126 34 S 193 102, 230 72 S 270 28, 288 22"
-                          fill="none"
-                          stroke="rgba(255,255,255,0.28)"
-                          strokeWidth="20"
-                          strokeLinecap="round"
-                        />
-                        <path
-                          d="M18 96 C 58 86, 74 28, 126 34 S 193 102, 230 72 S 270 28, 288 22"
-                          fill="none"
-                          stroke="white"
-                          strokeWidth="6"
-                          strokeLinecap="round"
-                          strokeDasharray="10 10"
-                        />
-                        <circle cx="22" cy="95" r="8" fill="white" />
-                        <circle cx="286" cy="22" r="9" fill="#0f172a" />
-                        <circle cx="150" cy="60" r="6" fill="#0f172a" stroke="white" strokeWidth="3" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="-mt-6 rounded-[2rem] border border-slate-200 bg-white p-4 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
-                  <div className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-                    {current.alert}
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    {current.heroStats.map(([label, value]) => (
-                      <div key={label} className="rounded-[1.4rem] border border-slate-200 bg-white p-3">
-                        <div className="text-[11px] uppercase tracking-[0.18em] text-slate-400">{label}</div>
-                        <div className="mt-2 text-lg font-semibold text-slate-900">{value}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 rounded-[1.6rem] border border-slate-200 bg-slate-50 p-4">
-                    <div className="text-sm font-semibold text-slate-900">Ключевые блоки экрана</div>
-                    <div className="mt-3 space-y-2">
-                      {current.panels.slice(0, 3).map((item) => (
-                        <div key={item} className="rounded-2xl bg-white px-3 py-2 text-sm leading-6 text-slate-600">
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="px-6 pb-5 pt-4">
-                  <div className="mx-auto h-1.5 w-32 rounded-full bg-slate-900/80" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FeatureCard({ title, text }) {
-  return (
-    <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="text-lg font-semibold text-slate-900">{title}</div>
-      <div className="mt-3 leading-7 text-slate-600">{text}</div>
-    </div>
-  );
-}
-
-function ScreenGroupCard({ title, caption, items }) {
-  return (
-    <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
-      <div className="text-xl font-semibold text-slate-900">{title}</div>
-      <div className="mt-2 text-sm leading-6 text-slate-500">{caption}</div>
-      <div className="mt-6 grid gap-3">
-        {items.map((item) => (
-          <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700">
-            {item}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function DetailedScreenCard({ screen }) {
-  return (
-    <div className={`rounded-[1.8rem] border p-6 shadow-sm ${screen.tone}`}>
-      <div className="text-lg font-semibold text-slate-900">{screen.name}</div>
-      <div className="mt-2 text-sm leading-6 text-slate-500">{screen.subtitle}</div>
-      <div className="mt-5 grid gap-3">
-        {screen.items.map((item) => (
-          <div key={item} className="rounded-2xl border border-white/70 bg-white/90 px-4 py-3 leading-6 text-slate-700">
-            {item}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FullScreenGroup({ group }) {
-  return (
-    <section className="rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm md:p-10">
-      <div className="max-w-3xl">
-        <div className={`inline-flex rounded-full bg-gradient-to-r ${group.accent} px-4 py-2 text-sm text-white shadow-sm`}>
-          {group.title}
-        </div>
-        <div className="mt-4 text-lg leading-7 text-slate-500">{group.caption}</div>
-      </div>
-
-      <div className="mt-8 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-        {group.cards.map((card) => (
-          <div key={card.name} className="rounded-[1.8rem] border border-slate-200 bg-slate-50 p-6">
-            <div className="text-xl font-semibold text-slate-900">{card.name}</div>
-            <div className="mt-2 text-sm leading-6 text-slate-500">{card.subtitle}</div>
-            <div className="mt-5 grid gap-3">
-              {card.items.map((item) => (
-                <div key={item} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 leading-6 text-slate-700">
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export default function UniquePrototype() {
   const [tab, setTab] = useState('parent');
-  const current = tabs[tab];
+  const [screenIndexes, setScreenIndexes] = useState({
+    parent: 0,
+    child: 0,
+    party: 0,
+    rating: 0,
+  });
+
+  const current = modes[tab];
+  const currentScreenIndex = screenIndexes[tab];
+
+  const fullScreenGroups = Object.values(modes).map((mode) => ({
+    title: mode.title,
+    caption: mode.desc,
+    accent: mode.accent,
+    cards: mode.screens.map((screen) => ({
+      name: screen.name,
+      subtitle: screen.subtitle,
+      items: [
+        ...screen.metrics.map(([label, value]) => `${label}: ${value}`),
+        ...screen.sections.flatMap((section) => section.items.slice(0, 2)),
+      ],
+    })),
+  }));
+
+  const handleScreenChange = (index) => {
+    setScreenIndexes((prev) => ({
+      ...prev,
+      [tab]: index,
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
@@ -924,7 +122,7 @@ export default function UniquePrototype() {
             </div>
 
             <div className="flex justify-center lg:justify-end">
-              <PhonePreview current={current} />
+              <PhoneMockup mode={current} screenIndex={currentScreenIndex} onScreenChange={handleScreenChange} />
             </div>
           </div>
         </div>
@@ -944,7 +142,7 @@ export default function UniquePrototype() {
         </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {Object.values(tabs).map((item) => (
+          {Object.values(modes).map((item) => (
             <FeatureCard key={item.title} title={item.title} text={item.desc} />
           ))}
         </div>
@@ -953,22 +151,21 @@ export default function UniquePrototype() {
       <section id="demo" className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-16 md:px-10 lg:px-12">
           <div className="max-w-3xl">
-            <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Детализация экранов</div>
+            <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Интерактивный демо-блок</div>
             <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
-              Ключевые сценарии уже показаны на лендинге
+              Каждый экран можно открыть прямо внутри телефона
             </h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
-              Ниже собраны режимы, которые раскрывают основной опыт: что видит родитель, как
-              выглядит игровой слой для ребенка, как работает пати и почему рейтинг удерживает
-              ежедневное использование.
+              Сначала переключайте режимы продукта, а затем листайте отдельные экраны внутри самого
+              телефона. Так лендинг уже работает как кликабельная презентация основного UX.
             </p>
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            {tabButton('parent', 'Родитель', { tab, setTab })}
-            {tabButton('child', 'Ребенок', { tab, setTab })}
-            {tabButton('party', 'Пати', { tab, setTab })}
-            {tabButton('rating', 'Рейтинг', { tab, setTab })}
+            <ModeButton active={tab === 'parent'} onClick={() => setTab('parent')} label="Родитель" />
+            <ModeButton active={tab === 'child'} onClick={() => setTab('child')} label="Ребенок" />
+            <ModeButton active={tab === 'party'} onClick={() => setTab('party')} label="Пати" />
+            <ModeButton active={tab === 'rating'} onClick={() => setTab('rating')} label="Рейтинг" />
           </div>
 
           <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1.02fr_0.98fr]">
@@ -982,16 +179,13 @@ export default function UniquePrototype() {
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   {current.featureBlocks.map((item) => (
-                    <div key={item.title} className="rounded-[1.7rem] border border-slate-200 bg-white p-5 shadow-sm">
-                      <div className="text-lg font-semibold text-slate-900">{item.title}</div>
-                      <div className="mt-3 leading-7 text-slate-600">{item.text}</div>
-                    </div>
+                    <FeatureCard key={item.title} title={item.title} text={item.text} />
                   ))}
                 </div>
               </div>
 
               <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Экранный состав</div>
+                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Ключевые блоки режима</div>
                 <div className="mt-5 grid gap-3">
                   {current.panels.map((item) => (
                     <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-700">
@@ -1002,28 +196,27 @@ export default function UniquePrototype() {
               </div>
 
               <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Дополнительные экраны</div>
+                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Экраны режима</div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  {current.extraScreens.map((item) => (
-                    <div key={item} className="rounded-2xl bg-slate-900 px-4 py-3 text-white shadow-sm">
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-                <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Подробные экраны режима</div>
-                <div className="mt-5 grid gap-4">
-                  {current.detailedScreens.map((screen) => (
-                    <DetailedScreenCard key={screen.name} screen={screen} />
+                  {current.screens.map((screen, index) => (
+                    <button
+                      key={screen.name}
+                      onClick={() => handleScreenChange(index)}
+                      className={`rounded-2xl px-4 py-3 text-left transition ${
+                        currentScreenIndex === index
+                          ? 'bg-slate-900 text-white shadow-sm'
+                          : 'border border-slate-200 bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      {screen.name}
+                    </button>
                   ))}
                 </div>
               </div>
             </div>
 
             <div className="flex justify-center lg:sticky lg:top-8">
-              <PhonePreview current={current} />
+              <PhoneMockup mode={current} screenIndex={currentScreenIndex} onScreenChange={handleScreenChange} />
             </div>
           </div>
         </div>
@@ -1062,28 +255,20 @@ export default function UniquePrototype() {
           <div className="grid items-start gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
               <div className="text-sm uppercase tracking-[0.22em] text-slate-500">Презентация</div>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
-                Место для ссылки на Canva
-              </h2>
+              <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">Место для ссылки на Canva</h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">
                 Здесь можно разместить ссылку на готовую презентацию или кликабельный прототип, чтобы
                 быстро переходить от лендинга к материалам для питча.
               </p>
               <div className="mt-6 rounded-[1.8rem] border border-dashed border-slate-300 bg-slate-50 px-5 py-6 text-slate-500">
-                Вставьте ссылку на Canva: `https://canva.com/...`
+                Вставьте ссылку на Canva: https://canva.com/...
               </div>
             </div>
 
             <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8">
               <div className="text-xl font-semibold text-slate-900">Что можно найти в Canva</div>
               <div className="mt-6 grid gap-3">
-                {[
-                  'Короткий питч продукта и ключевая ценность',
-                  'Основные пользовательские сценарии по ролям',
-                  'Подборка экранов мобильного интерфейса',
-                  'Примеры рейтингов, ачивок и пати-маршрутов',
-                  'Финальная презентационная сборка для встреч и демо',
-                ].map((item) => (
+                {canvaItems.map((item) => (
                   <div key={item} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-700">
                     {item}
                   </div>
