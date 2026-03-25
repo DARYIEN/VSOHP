@@ -3,21 +3,6 @@ import PhoneMockup from './components/PhoneMockup';
 import { FeatureCard, ScreenGroupCard } from './components/ContentBlocks';
 import { modes, screenGroups } from './data/productData';
 
-function ModeButton({ active, onClick, label }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`rounded-full border px-4 py-2 text-sm transition md:text-base ${
-        active
-          ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
-          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
-      }`}
-    >
-      {label}
-    </button>
-  );
-}
-
 export default function UniquePrototype() {
   const [tab, setTab] = useState('parent');
   const [screenIndexes, setScreenIndexes] = useState({
@@ -36,6 +21,11 @@ export default function UniquePrototype() {
       ...prev,
       [tab]: clampedIndex,
     }));
+  };
+
+  const handleModeChange = (modeKey) => {
+    if (!modes[modeKey]) return;
+    setTab(modeKey);
   };
 
   return (
@@ -108,6 +98,7 @@ export default function UniquePrototype() {
                 modeKey={tab}
                 screenIndex={currentScreenIndex}
                 onScreenChange={handleScreenChange}
+                onModeChange={handleModeChange}
               />
             </div>
           </div>
@@ -145,13 +136,6 @@ export default function UniquePrototype() {
               Переключайте режимы продукта, а навигация по экранным состояниям происходит прямо в
               интерфейсе телефона, как в реальном приложении.
             </p>
-          </div>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <ModeButton active={tab === 'parent'} onClick={() => setTab('parent')} label="Родитель" />
-            <ModeButton active={tab === 'child'} onClick={() => setTab('child')} label="Ребенок" />
-            <ModeButton active={tab === 'party'} onClick={() => setTab('party')} label="Пати" />
-            <ModeButton active={tab === 'rating'} onClick={() => setTab('rating')} label="Рейтинг" />
           </div>
 
           <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1.02fr_0.98fr]">
@@ -197,6 +181,7 @@ export default function UniquePrototype() {
                 modeKey={tab}
                 screenIndex={currentScreenIndex}
                 onScreenChange={handleScreenChange}
+                onModeChange={handleModeChange}
               />
             </div>
           </div>
