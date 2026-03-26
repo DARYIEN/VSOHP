@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import PhoneMockup from './components/PhoneMockup';
+import RouteMapShowcase from './components/RouteMapShowcase';
 import { FeatureCard, ScreenGroupCard } from './components/ContentBlocks';
 import { modes, screenGroups } from './data/productData';
 
@@ -178,6 +179,8 @@ export default function UniquePrototype() {
           ))}
         </div>
       </section>
+
+      <RouteMapShowcase mode={current} modeKey={tab} />
 
       <section id="demo" className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-16 md:px-10 lg:px-12">
