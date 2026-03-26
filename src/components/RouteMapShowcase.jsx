@@ -27,37 +27,70 @@ const mapThemes = {
   },
 };
 
-const routePoints = [
-  { x: 9, y: 84, label: 'Дом', kind: 'point' },
-  { x: 52, y: 55, label: 'Сбор', kind: 'point' },
-  { x: 88, y: 18, label: 'Школа', kind: 'point' },
+const mapSize = {
+  width: 1200,
+  height: 680,
+};
+
+const cityBlocks = [
+  { x: 35, y: 35, w: 250, h: 150, tone: 'park' },
+  { x: 315, y: 35, w: 240, h: 150, tone: 'district' },
+  { x: 585, y: 35, w: 240, h: 150, tone: 'district' },
+  { x: 855, y: 35, w: 310, h: 150, tone: 'water' },
+  { x: 35, y: 220, w: 250, h: 150, tone: 'district' },
+  { x: 315, y: 220, w: 240, h: 150, tone: 'district' },
+  { x: 585, y: 220, w: 240, h: 150, tone: 'district' },
+  { x: 855, y: 220, w: 310, h: 150, tone: 'district' },
+  { x: 35, y: 405, w: 250, h: 150, tone: 'district' },
+  { x: 315, y: 405, w: 240, h: 150, tone: 'district' },
+  { x: 585, y: 405, w: 240, h: 150, tone: 'park' },
+  { x: 855, y: 405, w: 310, h: 150, tone: 'district' },
+  { x: 35, y: 590, w: 250, h: 60, tone: 'district' },
+  { x: 315, y: 590, w: 240, h: 60, tone: 'district' },
+  { x: 585, y: 590, w: 240, h: 60, tone: 'district' },
+  { x: 855, y: 590, w: 310, h: 60, tone: 'district' },
 ];
 
-const userMarker = { x: 48, y: 57, label: 'Ты', kind: 'user' };
+const routePoints = [
+  { x: 90, y: 610, label: 'Дом', kind: 'point' },
+  { x: 555, y: 465, label: 'Сбор', kind: 'point' },
+  { x: 1080, y: 100, label: 'Школа', kind: 'point' },
+];
+
+const userMarker = { x: 540, y: 470, label: 'Ты', kind: 'user' };
 
 const partyMarkers = [
-  { x: 50, y: 54, label: 'Аня', kind: 'party' },
-  { x: 53, y: 56, label: 'Тимур', kind: 'party' },
-  { x: 55, y: 52, label: 'Лена', kind: 'party' },
+  { x: 520, y: 450, label: 'Аня', kind: 'party' },
+  { x: 565, y: 446, label: 'Тимур', kind: 'party' },
+  { x: 585, y: 482, label: 'Лена', kind: 'party' },
 ];
 
-const cityUsers = [
-  { x: 14, y: 16, label: 'Оля', className: '6А' },
-  { x: 23, y: 24, label: 'Кирилл', className: '5В' },
-  { x: 31, y: 14, label: 'Маша', className: '7Б' },
-  { x: 68, y: 14, label: 'Соня', className: '5А' },
-  { x: 77, y: 22, label: 'Марк', className: '6Б' },
-  { x: 84, y: 31, label: 'Илья', className: '5Б' },
-  { x: 10, y: 45, label: 'Лиза', className: '4А' },
-  { x: 19, y: 52, label: 'Рома', className: '6В' },
-  { x: 27, y: 68, label: 'Даша', className: '5А' },
-  { x: 37, y: 74, label: 'Костя', className: '8А' },
-  { x: 63, y: 71, label: 'Юра', className: '7А' },
-  { x: 72, y: 63, label: 'Ника', className: '6А' },
-  { x: 81, y: 78, label: 'Ева', className: '5Б' },
-  { x: 90, y: 52, label: 'Саша', className: '7В' },
-  { x: 61, y: 39, label: 'Варя', className: '4Б' },
-  { x: 41, y: 37, label: 'Паша', className: '5Г' },
+const namedStudents = [
+  { x: 150, y: 130, label: 'Оля' },
+  { x: 390, y: 110, label: 'Кирилл' },
+  { x: 700, y: 130, label: 'Соня' },
+  { x: 970, y: 155, label: 'Марк' },
+  { x: 430, y: 290, label: 'Паша' },
+  { x: 950, y: 300, label: 'Илья' },
+  { x: 380, y: 520, label: 'Даша' },
+  { x: 990, y: 515, label: 'Ника' },
+];
+
+const crowdStudents = [
+  { x: 75, y: 255 },
+  { x: 170, y: 285 },
+  { x: 230, y: 345 },
+  { x: 320, y: 130 },
+  { x: 615, y: 110 },
+  { x: 790, y: 260 },
+  { x: 885, y: 260 },
+  { x: 1030, y: 245 },
+  { x: 145, y: 505 },
+  { x: 275, y: 600 },
+  { x: 470, y: 620 },
+  { x: 670, y: 600 },
+  { x: 840, y: 625 },
+  { x: 1110, y: 610 },
 ];
 
 const layersList = [
@@ -75,6 +108,20 @@ function markerClass(kind, theme) {
   return 'bg-slate-600 ring-2 ring-white';
 }
 
+function blockToneClass(tone) {
+  if (tone === 'water') return '#dbeafe';
+  if (tone === 'park') return '#dcfce7';
+  return '#e2e8f0';
+}
+
+function toPercentX(x) {
+  return (x / mapSize.width) * 100;
+}
+
+function toPercentY(y) {
+  return (y / mapSize.height) * 100;
+}
+
 export default function RouteMapShowcase({ mode, modeKey }) {
   const theme = mapThemes[modeKey] || mapThemes.parent;
   const [layers, setLayers] = useState({
@@ -89,7 +136,7 @@ export default function RouteMapShowcase({ mode, modeKey }) {
     setLayers((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const visibleStudents = layers.users ? cityUsers.length : 0;
+  const visibleStudents = layers.users ? namedStudents.length + crowdStudents.length : 0;
   const visibleParty = layers.party ? partyMarkers.length + 1 : 0;
 
   return (
@@ -113,46 +160,47 @@ export default function RouteMapShowcase({ mode, modeKey }) {
 
               {layers.city && (
                 <>
-                  <rect x="820" y="40" width="320" height="200" rx="36" fill="#dbeafe" />
-                  <rect x="60" y="70" width="230" height="140" rx="28" fill="#dcfce7" />
-                  <rect x="860" y="450" width="250" height="150" rx="28" fill="#dcfce7" />
-                  <rect x="320" y="80" width="140" height="90" rx="18" fill="#e2e8f0" />
-                  <rect x="500" y="88" width="180" height="88" rx="18" fill="#e2e8f0" />
-                  <rect x="300" y="228" width="180" height="110" rx="20" fill="#e2e8f0" />
-                  <rect x="540" y="228" width="210" height="110" rx="20" fill="#e2e8f0" />
-                  <rect x="790" y="270" width="200" height="120" rx="20" fill="#e2e8f0" />
-                  <rect x="170" y="390" width="190" height="118" rx="20" fill="#e2e8f0" />
-                  <rect x="420" y="410" width="220" height="136" rx="20" fill="#e2e8f0" />
-                  <rect x="700" y="448" width="130" height="90" rx="18" fill="#e2e8f0" />
+                  {cityBlocks.map((block, index) => (
+                    <rect key={index} x={block.x} y={block.y} width={block.w} height={block.h} rx="22" fill={blockToneClass(block.tone)} />
+                  ))}
 
-                  <path d="M20 602 L430 190 L640 530 L1140 130" stroke="#cbd5e1" strokeWidth="64" strokeLinecap="round" />
-                  <path d="M80 560 L470 260 L760 598 L1180 350" stroke="#cbd5e1" strokeWidth="46" strokeLinecap="round" />
-                  <path d="M70 130 L280 230 L440 140 L660 260 L840 185 L1080 322" stroke="#cbd5e1" strokeWidth="28" strokeLinecap="round" />
+                  <rect x="285" y="0" width="30" height="680" fill="#cbd5e1" />
+                  <rect x="555" y="0" width="30" height="680" fill="#cbd5e1" />
+                  <rect x="825" y="0" width="30" height="680" fill="#cbd5e1" />
+
+                  <rect x="0" y="185" width="1200" height="30" fill="#cbd5e1" />
+                  <rect x="0" y="370" width="1200" height="30" fill="#cbd5e1" />
+                  <rect x="0" y="555" width="1200" height="30" fill="#cbd5e1" />
+
+                  <path d="M300 0 L300 680 M570 0 L570 680 M840 0 L840 680" stroke="#f8fafc" strokeWidth="3" strokeDasharray="10 12" />
+                  <path d="M0 200 L1200 200 M0 385 L1200 385 M0 570 L1200 570" stroke="#f8fafc" strokeWidth="3" strokeDasharray="10 12" />
                 </>
               )}
 
               {layers.route && (
                 <>
                   <path
-                    d="M108 552 C 250 505, 316 376, 430 364 S 624 432, 756 318 S 932 186, 1058 110"
+                    d="M90 610 L285 610 L285 465 L555 465 L555 300 L825 300 L825 100 L1080 100"
                     fill="none"
                     stroke={theme.routeSoft}
                     strokeWidth="46"
                     strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
                   <path
                     className="map-route-flow"
-                    d="M108 552 C 250 505, 316 376, 430 364 S 624 432, 756 318 S 932 186, 1058 110"
+                    d="M90 610 L285 610 L285 465 L555 465 L555 300 L825 300 L825 100 L1080 100"
                     fill="none"
                     stroke={theme.route}
                     strokeWidth="13"
                     strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
                 </>
               )}
 
               {layers.party && (
-                <circle cx="604" cy="381" r="88" fill="rgba(139, 92, 246, 0.16)" stroke="#8b5cf6" strokeWidth="2" />
+                <circle cx="550" cy="466" r="78" fill="rgba(139, 92, 246, 0.16)" stroke="#8b5cf6" strokeWidth="2" />
               )}
             </svg>
 
@@ -161,7 +209,7 @@ export default function RouteMapShowcase({ mode, modeKey }) {
                 <div
                   key={marker.label}
                   className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
+                  style={{ left: `${toPercentX(marker.x)}%`, top: `${toPercentY(marker.y)}%` }}
                 >
                   <div className="flex items-center gap-2">
                     <div className={`h-3.5 w-3.5 rounded-full ${markerClass(marker.kind, theme)}`} />
@@ -177,7 +225,7 @@ export default function RouteMapShowcase({ mode, modeKey }) {
             {(layers.route || layers.party) && (
               <div
                 className="absolute -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${userMarker.x}%`, top: `${userMarker.y}%` }}
+                style={{ left: `${toPercentX(userMarker.x)}%`, top: `${toPercentY(userMarker.y)}%` }}
               >
                 <div className="flex items-center gap-2">
                   <div className={`h-4 w-4 rounded-full ${markerClass(userMarker.kind, theme)}`} />
@@ -195,7 +243,7 @@ export default function RouteMapShowcase({ mode, modeKey }) {
                 <div
                   key={marker.label}
                   className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
+                  style={{ left: `${toPercentX(marker.x)}%`, top: `${toPercentY(marker.y)}%` }}
                 >
                   <div className="flex items-center gap-2">
                     <div className={`h-3.5 w-3.5 rounded-full ${markerClass(marker.kind, theme)}`} />
@@ -209,16 +257,27 @@ export default function RouteMapShowcase({ mode, modeKey }) {
               ))}
 
             {layers.users &&
-              cityUsers.map((marker) => (
+              namedStudents.map((marker) => (
                 <div
-                  key={`${marker.label}-${marker.className}`}
+                  key={marker.label}
                   className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
+                  style={{ left: `${toPercentX(marker.x)}%`, top: `${toPercentY(marker.y)}%` }}
                 >
                   <div className="flex items-center gap-1.5">
                     <div className={`h-2.5 w-2.5 rounded-full ${markerClass('others', theme)}`} />
                     {layers.labels && <div className="text-[10px] font-medium text-slate-600">{marker.label}</div>}
                   </div>
+                </div>
+              ))}
+
+            {layers.users &&
+              crowdStudents.map((marker, index) => (
+                <div
+                  key={index}
+                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: `${toPercentX(marker.x)}%`, top: `${toPercentY(marker.y)}%` }}
+                >
+                  <div className="h-2 w-2 rounded-full bg-slate-500/85 ring-1 ring-white" />
                 </div>
               ))}
 
