@@ -285,6 +285,16 @@ export default function UniquePrototype() {
           ))}
         </div>
       </section>
+
+      <footer className="border-t border-slate-200 bg-white/90">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-6 text-sm text-slate-600 md:flex-row md:items-center md:justify-between md:px-10 lg:px-12">
+          <div className="font-medium text-slate-700">Все права защищены.</div>
+          <div className="flex flex-col gap-1 md:items-end">
+            <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Наши контакты</div>
+            <div className="text-slate-700">Email: hello@unique.app | Telegram: @unique_support</div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
